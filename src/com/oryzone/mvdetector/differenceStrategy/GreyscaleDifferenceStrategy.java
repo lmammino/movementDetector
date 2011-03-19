@@ -8,6 +8,14 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_RGB2GRAY;
 import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
 
+/**
+ * Difference strategy that converts the images to grey scale and
+ * calculate the difference as a difference between each grey tone pixel value.
+ * @author Luciano Mammino, Andrea Mangano
+ * @version 1.0
+ * @see IDifferenceStrategy
+ * @see AbstractDifferenceStrategy
+ */
 public class GreyscaleDifferenceStrategy extends AbstractDifferenceStrategy
 {
 
@@ -55,7 +63,6 @@ public class GreyscaleDifferenceStrategy extends AbstractDifferenceStrategy
 		/ (255 * width * height);
 
 	return this.differenceAmount;
-
     }
 
 }

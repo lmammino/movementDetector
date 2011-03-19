@@ -5,6 +5,14 @@ import java.awt.image.BufferedImage;
 
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
+/**
+ * Difference strategy that calculates the difference 
+ * by subtracting each rgb value and making a pixel per pixel average.
+ * @author Luciano Mammino, Andrea Mangano
+ * @version 1.0
+ * @see IDifferenceStrategy
+ * @see AbstractDifferenceStrategy
+ */
 public class RgbDifferenceStrategy extends AbstractDifferenceStrategy
 {
 

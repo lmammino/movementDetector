@@ -11,8 +11,7 @@ import static com.googlecode.javacv.cpp.opencv_core.*;
  * Class used by the <Detector> class to calculate the difference between frames
  * of the stream
  * 
- * @author Andrea Mangano<amangano@oryzone.com>
- * @author Luciano Mammino<lmammino@oryzone.com>
+ * @author Andrea Mangano, Luciano Mammino
  * @version 1.0
  */
 public class ImageDifference
@@ -53,8 +52,8 @@ public class ImageDifference
 
     /**
      * Creates a new instance of the ImageDifference class
-     * @todo determinate the instance of the difference strategy via configuration
      */
+    ///TODO: determinate the instance of the difference strategy via configuration
     public ImageDifference()
     {
 	this.prevImage = null;
@@ -66,7 +65,7 @@ public class ImageDifference
 
     /**
      * Gets the previous image instance
-     * @return
+     * @return the previous image
      */
     public IplImage getPrevImage()
     {
@@ -77,7 +76,7 @@ public class ImageDifference
     /**
      * Sets the previous image instance
      * @param prevImage the previous image instance
-     * @return the same <ImageDifference> instance (to allow method
+     * @return the same {@link ImageDifference} instance (to allow method
      * chaining)
      */
     public ImageDifference setPrevImage(IplImage prevImage)
@@ -89,7 +88,7 @@ public class ImageDifference
     
     /**
      * Gets the current image instance
-     * @return
+     * @return the current image
      */
     public IplImage getCurrImage()
     {
@@ -100,7 +99,7 @@ public class ImageDifference
     /**
      * Sets the current image instance
      * @param currImage the current image instance
-     * @return the same <ImageDifference> instance (to allow method
+     * @return the same {@link ImageDifference} instance (to allow method
      * chaining)
      */
     public ImageDifference setCurrImage(IplImage currImage)
@@ -114,7 +113,7 @@ public class ImageDifference
      * Sets the previous and the current image instances
      * @param prevImage the previous image instance
      * @param currImage the current image instance
-     * @return the same <ImageDifference> instance (to allow method
+     * @return the same {@link ImageDifference} instance (to allow method
      * chaining)
      */
     public ImageDifference setImages(IplImage prevImage, IplImage currImage)
@@ -126,8 +125,8 @@ public class ImageDifference
     
     /**
      * Gets the image of builded as difference between the previous and current
-     * image instances after the last <calculateDifference> call
-     * @return
+     * image instances after the last {@link #calculateDifference} call
+     * @return the difference image
      */
     public IplImage getDiffImage()
     {
@@ -136,7 +135,7 @@ public class ImageDifference
 
     
     /**
-     * Gets the amount of difference calculated after the last <calculateDifference> call
+     * Gets the amount of difference calculated after the last {@link #calculateDifference} call
      * @return An integer value that indicates how much the previous and
      * the current image are different
      */
@@ -147,7 +146,7 @@ public class ImageDifference
     
     
     /**
-     * gets the amount of difference calculated after the last <calculateDifference> call
+     * gets the amount of difference calculated after the last {@link #calculateDifference} call
      * @return A float that indicates the difference percentage between the
      * previous and the current image
      */
@@ -159,13 +158,13 @@ public class ImageDifference
     
     /**
      * Calculates the difference between the previous image and the current image and
-     * updates the fields <diffImage>, <differenceAmount> and <differencePercent>
+     * updates the fields {@link #diffImage}, {@link #differenceAmount} and {@link #differencePercent}
      * @param prevImage
      * @param currImage
      * @return An integer value that indicates how much the previous and
      * the current image are different
-     * @todo remove debug line
      */
+    ///TODO: remove debug line
     public int calculateDifference(IplImage prevImage, IplImage currImage)
     {
 	this.differenceStrategy.calculateDifference(prevImage, currImage);

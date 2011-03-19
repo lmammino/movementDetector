@@ -1,10 +1,9 @@
 package com.oryzone.mvdetector;
 
 /**
- * Class that runs up the app
+ * Class that runs up the application
  * 
- * @author Andrea Mangano<amangano@oryzone.com>
- * @author Luciano Mammino<lmammino@oryzone.com>
+ * @author Andrea Mangano, Luciano Mammino
  * @version 1.0
  */
 public class Main
@@ -14,10 +13,9 @@ public class Main
      * 
      * @param args
      *            console args
-     * @todo Catch all the generic exceptions and provide a method to handle
-     *       them (logging and reporting)
      * @throws Exception
      */
+    ///TODO: Catch all the generic exceptions and provide a method to handle them (logging and reporting)
     public static void main(String[] args) throws Exception
     {
 	Detector d = new Detector();
