@@ -7,86 +7,176 @@ import com.oryzone.mvdetector.differenceStrategy.IDifferenceStrategy;
 import com.oryzone.mvdetector.differenceStrategy.RgbDifferenceStrategy;
 import static com.googlecode.javacv.cpp.opencv_core.*;
 
+/**
+ * Class used by the <Detector> class to calculate the difference between frames
+ * of the stream
+ * 
+ * @author Andrea Mangano<amangano@oryzone.com>
+ * @author Luciano Mammino<lmammino@oryzone.com>
+ * @version 1.0
+ */
 public class ImageDifference
 {
-	protected IplImage prevImage;
-	protected IplImage currImage;
-	protected IplImage diffImage;
-	protected int differenceAmount;
-	protected float differencePercent;
-	protected IDifferenceStrategy differenceStrategy;
-	
-	public ImageDifference()
-	{
-		this.prevImage = null;
-		this.currImage = null;
-		this.diffImage = null;
-		this.differenceAmount = 0;
-		this.differenceStrategy = new GreyscaleDifferenceStrategy();
-	}
-	
-	
-	public IplImage getPrevImage() {
-		return this.prevImage;
-	}
+    /**
+     * The previous image instance
+     */
+    protected IplImage prevImage;
+    
+    /**
+     * The current image instance
+     */
+    protected IplImage currImage;
+    
+    /**
+     * An image that represents the difference between the previous
+     * and the current image
+     */
+    protected IplImage diffImage;
+    
+    /**
+     * An integer value that indicates how much the previous and
+     * the current image are different
+     */
+    protected int differenceAmount;
+    
+    /**
+     * A float that indicates the difference percentage between the
+     * previous and the current image
+     */
+    protected float differencePercent;
+    
+    /**
+     * An instance of a strategy that is used to calculate
+     * the difference between the previous and the current image
+     */
+    protected IDifferenceStrategy differenceStrategy;
 
+    /**
+     * Creates a new instance of the ImageDifference class
+     * @todo determinate the instance of the difference strategy via configuration
+     */
+    public ImageDifference()
+    {
+	this.prevImage = null;
+	this.currImage = null;
+	this.diffImage = null;
+	this.differenceAmount = 0;
+	this.differenceStrategy = new GreyscaleDifferenceStrategy();
+    }
 
+    /**
+     * Gets the previous image instance
+     * @return
+     */
+    public IplImage getPrevImage()
+    {
+	return this.prevImage;
+    }
 
+    
+    /**
+     * Sets the previous image instance
+     * @param prevImage the previous image instance
+     * @return the same <ImageDifference> instance (to allow method
+     * chaining)
+     */
+    public ImageDifference setPrevImage(IplImage prevImage)
+    {
+	this.prevImage = prevImage;
+	return this;
+    }
 
-	public void setPrevImage(IplImage prevImage) {
-		this.prevImage = prevImage;
-	}
+    
+    /**
+     * Gets the current image instance
+     * @return
+     */
+    public IplImage getCurrImage()
+    {
+	return this.currImage;
+    }
 
+    
+    /**
+     * Sets the current image instance
+     * @param currImage the current image instance
+     * @return the same <ImageDifference> instance (to allow method
+     * chaining)
+     */
+    public ImageDifference setCurrImage(IplImage currImage)
+    {
+	this.currImage = currImage;
+	return this;
+    }
 
+    
+    /**
+     * Sets the previous and the current image instances
+     * @param prevImage the previous image instance
+     * @param currImage the current image instance
+     * @return the same <ImageDifference> instance (to allow method
+     * chaining)
+     */
+    public ImageDifference setImages(IplImage prevImage, IplImage currImage)
+    {
+	this.setPrevImage(prevImage).setCurrImage(currImage);
+	return this;
+    }
 
+    
+    /**
+     * Gets the image of builded as difference between the previous and current
+     * image instances after the last <calculateDifference> call
+     * @return
+     */
+    public IplImage getDiffImage()
+    {
+	return this.diffImage;
+    }
 
-	public IplImage getCurrImage() {
-		return this.currImage;
-	}
+    
+    /**
+     * Gets the amount of difference calculated after the last <calculateDifference> call
+     * @return An integer value that indicates how much the previous and
+     * the current image are different
+     */
+    public int getDifferenceAmount()
+    {
+	return this.differenceAmount;
+    }
+    
+    
+    /**
+     * gets the amount of difference calculated after the last <calculateDifference> call
+     * @return A float that indicates the difference percentage between the
+     * previous and the current image
+     */
+    public float getDifferencePercent()
+    {
+	return this.differencePercent;
+    }
 
+    
+    /**
+     * Calculates the difference between the previous image and the current image and
+     * updates the fields <diffImage>, <differenceAmount> and <differencePercent>
+     * @param prevImage
+     * @param currImage
+     * @return An integer value that indicates how much the previous and
+     * the current image are different
+     * @todo remove debug line
+     */
+    public int calculateDifference(IplImage prevImage, IplImage currImage)
+    {
+	this.differenceStrategy.calculateDifference(prevImage, currImage);
+	this.diffImage = this.differenceStrategy.getDifferenceImage();
+	this.differenceAmount = this.differenceStrategy.getDifferenceAmount();
+	this.differencePercent = this.differenceStrategy.getDifferencePercent();
 
+	System.out.println(new DecimalFormat("0.00")
+		.format(this.differencePercent * 100) + "%");
 
+	return this.differenceAmount;
+    }
 
-	public void setCurrImage(IplImage currImage) {
-		this.currImage = currImage;
-	}
-
-
-	
-	public void setImages(IplImage prevImage, IplImage currImage)
-	{
-		this.setPrevImage(prevImage);
-		this.setCurrImage(currImage);
-	}
-	
-	
-
-	public IplImage getDiffImage() {
-		return diffImage;
-	}
-
-
-
-
-	public int getDifferenceAmount() {
-		return differenceAmount;
-	}
-
-
-
-
-	public int calculateDifference(IplImage prevImage, IplImage currImage)
-	{
-		this.differenceStrategy.calculateDifference(prevImage, currImage);
-		this.diffImage = this.differenceStrategy.getDifferenceImage();
-		this.differenceAmount = this.differenceStrategy.getDifferenceAmount();
-		this.differencePercent = this.differenceStrategy.getDifferencePercent();
-		
-		System.out.println(new DecimalFormat("0.00").format(this.differencePercent * 100) + "%");
-		
-		return this.differenceAmount;
-	}
-	
-	
-	
 }

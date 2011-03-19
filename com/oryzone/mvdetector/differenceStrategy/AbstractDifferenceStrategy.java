@@ -8,13 +8,11 @@ public abstract class AbstractDifferenceStrategy implements IDifferenceStrategy
     protected IplImage differenceImage;
     protected int differenceAmount;
     protected float differencePercent;
-    
-    
-    
-    @Override
-    public abstract int calculateDifference(IplImage prevImage, IplImage currImage);
 
-    
+    @Override
+    public abstract int calculateDifference(IplImage prevImage,
+	    IplImage currImage);
+
     @Override
     public int getDifferenceAmount()
     {
