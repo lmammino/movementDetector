@@ -16,4 +16,21 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.jem.beaninfo.BeanInfoNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/images/media-playback-stop.png</name>
+			<type>1</type>
+			<locationURI>PARENT_LOC/media-playback-stop.png</locationURI>
+		</link>
+		<link>
+			<name>src/images/media-record.png</name>
+			<type>1</type>
+			<locationURI>PARENT_LOC/media-record.png</locationURI>
+		</link>
+		<link>
+			<name>src/images/preferences-system.png</name>
+			<type>1</type>
+			<locationURI>PARENT_LOC/preferences-system.png</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
