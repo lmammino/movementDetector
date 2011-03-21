@@ -10,7 +10,7 @@ import static com.googlecode.javacv.cpp.opencv_core.*;
  * @author Andrea Mangano, Luciano Mammino
  * @version 1.0
  */
-public class Detector
+public class Detector implements Runnable
 {
     /**
      * The current status of the detector
@@ -23,6 +23,31 @@ public class Detector
     protected DetectorOptions options;
 
     /**
+     * The stream frame grabber
+     */
+    protected OpenCVFrameGrabber grabber;
+
+    /**
+     * The frame used to display the video stream
+     */
+    protected CanvasFrame canvasFrame;
+
+    /**
+     * The image difference processor
+     */
+    protected ImageDifference imageDifference;
+
+    /**
+     * The current thread
+     */
+    protected Thread thread;
+
+    /**
+     * Flag used to activate/deactivate the Thread
+     */
+    protected boolean isThreadActive = false;
+
+    /**
      * Creates a new Detector instance with a given set of options
      * 
      * @param options
@@ -30,8 +55,14 @@ public class Detector
      */
     public Detector(DetectorOptions options)
     {
-		this.options = options;
-		this.status = DetectorStatus.STOPPED;
+	this.options = options;
+	this.status = DetectorStatus.STOPPED;
+	this.grabber = new OpenCVFrameGrabber(0);
+	this.canvasFrame = new CanvasFrame("Capturing");
+	this.canvasFrame.setCanvasSize(640, 480);
+	this.grabber.setImageWidth(640);
+	this.grabber.setImageHeight(480);
+	this.imageDifference = new ImageDifference();
     }
 
     /**
@@ -39,7 +70,17 @@ public class Detector
      */
     public Detector()
     {
-		this(new DetectorOptions());
+	this(new DetectorOptions());
+    }
+
+    /**
+     * Gets the image difference instance
+     * 
+     * @return the current image difference instance
+     */
+    public ImageDifference getImageDifference()
+    {
+	return this.imageDifference;
     }
 
     /**
@@ -48,43 +89,54 @@ public class Detector
      * @throws Exception
      *             in case of every kind of exception
      */
-    public void start() throws Exception
+    public void start()
     {
-		this.status = DetectorStatus.STARTED;
-		OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(0);
-		grabber.setImageWidth(640);
-		grabber.setImageHeight(480);
-		grabber.start();
+	if (this.thread == null)
+	    this.thread = new Thread(this);
 
-		IplImage frame = grabber.grab();
-		IplImage currImage = null;
-		IplImage prevImage = null;
-	
-		CanvasFrame canvasFrame = new CanvasFrame("Capturing");
-		canvasFrame.setCanvasSize(640, 480);
-	
-		ImageDifference diff = new ImageDifference();
-	
-		while (canvasFrame.isVisible() && (frame = grabber.grab()) != null)
+	this.isThreadActive = true;
+	this.thread.start();
+    }
+
+    public void run()
+    {
+	try
+	{
+	    this.canvasFrame.setCanvasSize(640, 480);
+
+	    this.status = DetectorStatus.STARTED;
+	    this.grabber.start();
+
+	    IplImage frame = grabber.grab();
+	    IplImage currImage = null;
+	    IplImage prevImage = null;
+
+	    while ((frame = grabber.grab()) != null && this.isThreadActive)
+	    {
+		this.status = DetectorStatus.CAPTURING;
+
+		if (currImage == null)
+		    currImage = frame.clone();
+		else
 		{
-		    this.status = DetectorStatus.CAPTURING;
-	
-		    if (currImage == null)
-				currImage = frame.clone();
-		    else
-		    {
-				prevImage = currImage.clone();
-				currImage = frame.clone();
-		    }
-	
-		    if (prevImage != null && currImage != null)
-		    {
-				diff.setImages(prevImage, currImage);
-				diff.calculateDifference(prevImage, currImage);
-				canvasFrame.showImage(diff.getDiffImage());
-		    }
+		    prevImage = currImage.clone();
+		    currImage = frame.clone();
 		}
-		this.status = DetectorStatus.STOPPED;
+
+		if (prevImage != null && currImage != null)
+		{
+		    this.imageDifference.setImages(prevImage, currImage);
+		    this.imageDifference.calculateDifference(prevImage,
+			    currImage);
+		    this.canvasFrame.showImage(this.imageDifference
+			    .getDiffImage());
+		}
+	    }
+	    this.status = DetectorStatus.STOPPED;
+	} catch (Exception e)
+	{
+	    e.printStackTrace();
+	}
     }
 
     /**
@@ -92,16 +144,26 @@ public class Detector
      */
     public void stop()
     {
-		this.status = DetectorStatus.STOPPED;
+	this.canvasFrame.setVisible(false);
+	this.isThreadActive = false;
+	this.status = DetectorStatus.STOPPED;
+	try
+	{
+	    grabber.stop();
+	} catch (Exception e)
+	{
+	    e.printStackTrace();
+	}
     }
 
     /**
      * Gets the current detection status
+     * 
      * @return the current status of the detector
      */
     public DetectorStatus getStatus()
     {
-		return this.status;
+	return this.status;
     }
 
     /**
@@ -112,27 +174,27 @@ public class Detector
      */
     public enum DetectorStatus
     {
-		/**
-		 * Status acquired when the detector is stopped. It is the initial
-		 * status of the detector.
-		 */
-		STOPPED,
-	
-		/**
-		 * Transitional status between {@link #STOPPED} and {@link #CAPTURING}
-		 */
-		STARTED,
-	
-		/**
-		 * Status acquired when the stream is being processed
-		 */
-		CAPTURING,
-	
-		/**
-		 * Status acquired for a certain amount of time when an abnormal
-		 * movement is detected
-		 */
-		WARNING
+	/**
+	 * Status acquired when the detector is stopped. It is the initial
+	 * status of the detector.
+	 */
+	STOPPED,
+
+	/**
+	 * Transitional status between {@link #STOPPED} and {@link #CAPTURING}
+	 */
+	STARTED,
+
+	/**
+	 * Status acquired when the stream is being processed
+	 */
+	CAPTURING,
+
+	/**
+	 * Status acquired for a certain amount of time when an abnormal
+	 * movement is detected
+	 */
+	WARNING
     }
 
 }

@@ -6,6 +6,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -24,6 +26,8 @@ public class MainWindow
 {
     protected Display display;
     protected Shell shell;
+    protected Canvas canvas;
+    protected Detector detector;
     
     
     public MainWindow()
@@ -47,6 +51,7 @@ public class MainWindow
     {
 	this.shell.setText("MovementDetector");
         this.shell.setSize(640, 480);
+        this.shell.setLayout(new GridLayout(1, true));
         
         Image img_record = null;
         Image img_stop = null;
@@ -72,16 +77,17 @@ public class MainWindow
         new ToolItem(toolBar, SWT.SEPARATOR);
         ToolItem btn_settings = new ToolItem(toolBar, SWT.PUSH);
         btn_settings.setImage(img_settings);
+        new ToolItem(toolBar, SWT.SEPARATOR);
         
         btn_record.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent event) {
                 
-        	Detector d = new Detector();
+        	detector = new Detector();
         	try
 		{
-		    ///TODO: get frames and display
+        	    detector.start();
 		} catch (Exception e)
 		{
 		    e.printStackTrace();
@@ -90,7 +96,21 @@ public class MainWindow
             }
         });
         
+        btn_stop.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                
+        	if(detector != null)
+        	    detector.stop();
+            }
+        });
+        
+        
         toolBar.pack();
+        
+        
+        
     }
     
     

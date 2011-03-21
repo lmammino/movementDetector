@@ -17,12 +17,8 @@ public class Main
      *            console args
      * @throws Exception
      */
-    ///TODO: Catch all the generic exceptions and provide a method to handle them (logging and reporting)
-    public static void main(String[] args) throws Exception
-    {
-	//Detector d = new Detector();
-	//d.start();
-	
+    public static void main(String[] args)
+    {	
 	MainWindow w = new MainWindow();
 	w.show();
 	w.getDisplay().dispose();
