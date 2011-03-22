@@ -20,6 +20,7 @@ public class Main
      * @throws Exception
      */
     public static void main(String[] args)
+<<<<<<< HEAD
     {
         Main.makeAppNative();
         Main.setSystemLookAndFeel();
@@ -79,6 +80,12 @@ public class Main
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.macos.smallTabs", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", AppInfo.NAME);
+=======
+    {	
+	MainWindow w = new MainWindow();
+	w.show();
+	w.getDisplay().dispose();
+>>>>>>> 29cfb7eb707ee6c3886fd3ca93bed632d55b68df
     }
 
 }
