@@ -44,6 +44,7 @@ public class OptionsWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText("Sensibility");

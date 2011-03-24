@@ -164,7 +164,6 @@ public class ImageDifference
      * @return An integer value that indicates how much the previous and
      * the current image are different
      */
-    ///TODO: remove debug line
     public int calculateDifference(IplImage prevImage, IplImage currImage)
     {
 	this.differenceStrategy.calculateDifference(prevImage, currImage);
@@ -172,8 +171,9 @@ public class ImageDifference
 	this.differenceAmount = this.differenceStrategy.getDifferenceAmount();
 	this.differencePercent = this.differenceStrategy.getDifferencePercent();
 
-	System.out.println(new DecimalFormat("0.00")
-		.format(this.differencePercent * 100) + "%");
+        ///TODO: remove debug line
+	//System.out.println(new DecimalFormat("0.00")
+	//	.format(this.differencePercent * 100) + "%");
 
 	return this.differenceAmount;
     }

@@ -23,6 +23,7 @@ public class MainWindow extends javax.swing.JFrame
 {
 
     protected OptionsWindow optionsWindow;
+    protected ConsoleWindow console;
     protected Detector detector;
 
 
@@ -31,6 +32,9 @@ public class MainWindow extends javax.swing.JFrame
         initComponents();
         initCustomComponents();
         centerInScreen();
+
+        console.toggle()
+                .log("Application started!");
     }
 
 
@@ -43,9 +47,7 @@ public class MainWindow extends javax.swing.JFrame
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        canvas = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
         btn_start = new javax.swing.JButton();
         btn_stop = new javax.swing.JButton();
@@ -54,20 +56,10 @@ public class MainWindow extends javax.swing.JFrame
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        jPanel1.setPreferredSize(new java.awt.Dimension(665, 460));
-        jPanel1.setLayout(new java.awt.BorderLayout());
-
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList1);
-
-        jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+        canvas.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        canvas.setPreferredSize(new java.awt.Dimension(665, 460));
+        canvas.setLayout(new java.awt.BorderLayout());
+        getContentPane().add(canvas, java.awt.BorderLayout.CENTER);
 
         jToolBar1.setBorder(null);
         jToolBar1.setRollover(true);
@@ -118,6 +110,7 @@ public class MainWindow extends javax.swing.JFrame
     private void initCustomComponents()
     {
         this.optionsWindow = new OptionsWindow();
+        this.console = new ConsoleWindow();
     }
 
     private void centerInScreen()
@@ -128,7 +121,6 @@ public class MainWindow extends javax.swing.JFrame
     }
 
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
-
         this.detector = new Detector();
         detector.start();
     }//GEN-LAST:event_btn_startActionPerformed
@@ -146,9 +138,7 @@ public class MainWindow extends javax.swing.JFrame
     private javax.swing.JButton btn_options;
     private javax.swing.JButton btn_start;
     private javax.swing.JButton btn_stop;
-    private javax.swing.JList jList1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel canvas;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables

@@ -1,5 +1,6 @@
 package com.oryzone.mvdetector;
 
+import java.util.Date;
 import com.googlecode.javacv.*;
 import static com.googlecode.javacv.cpp.opencv_core.*;
 
@@ -47,6 +48,13 @@ public class Detector implements Runnable
      */
     protected boolean isThreadActive = false;
 
+
+    /**
+     * The date when the last warning occurred
+     */
+    protected Date warningActivationDate;
+
+    
     /**
      * Creates a new Detector instance with a given set of options
      * 
@@ -130,6 +138,8 @@ public class Detector implements Runnable
 			    currImage);
 		    this.canvasFrame.showImage(this.imageDifference
 			    .getDiffImage());
+
+                    this.handleWarning();
 		}
 	    }
 	    this.status = DetectorStatus.STOPPED;
@@ -165,6 +175,30 @@ public class Detector implements Runnable
     {
 	return this.status;
     }
+
+
+    /**
+     * handles Warning
+     */
+    protected void handleWarning()
+    {
+        System.out.println(this.imageDifference.differencePercent + " [ " + this.options.getWarningSensibility() + " ]");
+        
+        if(this.imageDifference.differencePercent >= this.options.getWarningSensibility())
+            System.out.println("BEEEEEP!");
+        
+        
+        if(this.status == DetectorStatus.WARNING)
+        {
+            ///TODO: handle warning
+        }
+    }
+
+
+
+
+
+
 
     /**
      * Enumerates all the possible status of the detector
