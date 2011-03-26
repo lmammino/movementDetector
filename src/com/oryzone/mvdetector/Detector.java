@@ -1,5 +1,9 @@
 package com.oryzone.mvdetector;
 
+import com.oryzone.mvdetector.detectorEvents.WarningEndedEvent;
+import com.oryzone.mvdetector.detectorEvents.WarningStartedEvent;
+import com.oryzone.mvdetector.detectorEvents.WarningListener;
+import javax.swing.event.EventListenerList;
 import java.util.Date;
 import com.googlecode.javacv.*;
 import static com.googlecode.javacv.cpp.opencv_core.*;
@@ -54,6 +58,11 @@ public class Detector implements Runnable
      */
     protected Date warningActivationDate;
 
+    /**
+     * List used to store the attached listeners for the warning events
+     */
+    protected EventListenerList warningListeners;
+
     
     /**
      * Creates a new Detector instance with a given set of options
@@ -71,6 +80,7 @@ public class Detector implements Runnable
 	this.grabber.setImageWidth(640);
 	this.grabber.setImageHeight(480);
 	this.imageDifference = new ImageDifference();
+        this.warningListeners = new EventListenerList();
     }
 
     /**
@@ -195,7 +205,38 @@ public class Detector implements Runnable
     }
 
 
+    public Detector addWarningListener(WarningListener listener)
+    {
+        this.warningListeners.add(WarningListener.class, listener);
+        return this;
+    }
 
+
+    public Detector removeWarningListener(WarningListener listener)
+    {
+        this.warningListeners.remove(WarningListener.class, listener);
+        return this;
+    }
+
+
+    protected void fireWarningStartedEvent(WarningStartedEvent event)
+    {
+        WarningListener[] listeners = this.warningListeners.getListeners(WarningListener.class);
+        for (int i = 0; i < listeners.length; i++)
+        {
+            listeners[i].onWarningStarted(event);
+        }
+    }
+
+    
+    protected void fireWarningEndedEvent(WarningEndedEvent event)
+    {
+        WarningListener[] listeners = this.warningListeners.getListeners(WarningListener.class);
+        for (int i = 0; i < listeners.length; i++)
+        {
+            listeners[i].onWarningEnded(event);
+        }
+    }
 
 
 
