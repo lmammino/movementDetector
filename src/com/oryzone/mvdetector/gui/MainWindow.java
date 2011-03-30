@@ -11,15 +11,20 @@
 package com.oryzone.mvdetector.gui;
 
 import com.oryzone.mvdetector.Detector;
+import com.oryzone.mvdetector.detectorEvents.WarningEndedEvent;
+import com.oryzone.mvdetector.detectorEvents.WarningListener;
+import com.oryzone.mvdetector.detectorEvents.WarningSignalEvent;
+import com.oryzone.mvdetector.detectorEvents.WarningStartedEvent;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.Date;
 
 
 /**
  *
  * @author Luciano
  */
-public class MainWindow extends javax.swing.JFrame
+public class MainWindow extends javax.swing.JFrame implements WarningListener
 {
 
     protected OptionsWindow optionsWindow;
@@ -122,6 +127,7 @@ public class MainWindow extends javax.swing.JFrame
 
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
         this.detector = new Detector();
+        this.detector.addWarningListener(this);
         detector.start();
     }//GEN-LAST:event_btn_startActionPerformed
 
@@ -142,4 +148,27 @@ public class MainWindow extends javax.swing.JFrame
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
+
+
+    @Override
+    public void onWarningStarted(WarningStartedEvent e)
+    {
+        Date d = new Date();
+        this.console.log("*** WARNING STARTED");
+    }
+
+
+    @Override
+    public void onWarningEnded(WarningEndedEvent e)
+    {
+        Date d = new Date();
+        this.console.log("*** WARNING ENDED");
+    }
+
+
+    @Override
+    public void onWarningSignal(WarningSignalEvent e)
+    {
+        this.console.log( ""+(e.getDetector().getImageDifference().getDifferencePercent()) );
+    }
 }

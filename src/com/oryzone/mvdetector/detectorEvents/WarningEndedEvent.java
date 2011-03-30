@@ -1,6 +1,6 @@
 package com.oryzone.mvdetector.detectorEvents;
 
-import java.util.EventObject;
+import com.oryzone.mvdetector.Detector;
 
 /**
  * Event class to describe the Warning ended event
@@ -8,10 +8,16 @@ import java.util.EventObject;
  * @version 1.0
  * @see WarningStartedEvent
  */
-public class WarningEndedEvent extends EventObject
+public class WarningEndedEvent extends DetectorEvent
 {
-    public WarningEndedEvent(Object source)
+
+    /**
+     * Constructor
+     * @param detector the detector that fired the event
+     */
+    public WarningEndedEvent(Detector detector)
     {
-        super(source);
+        super(detector);
     }
+
 }

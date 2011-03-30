@@ -1,5 +1,6 @@
 package com.oryzone.mvdetector;
 
+import com.oryzone.mvdetector.detectorEvents.WarningSignalEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningEndedEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningStartedEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningListener;
@@ -57,6 +58,13 @@ public class Detector implements Runnable
      * The date when the last warning occurred
      */
     protected Date warningActivationDate;
+
+
+    /**
+     * The date when the last warning period ended
+     */
+    protected Date warningDeactivationDate;
+    
 
     /**
      * List used to store the attached listeners for the warning events
@@ -129,10 +137,9 @@ public class Detector implements Runnable
 	    IplImage currImage = null;
 	    IplImage prevImage = null;
 
+            this.status = DetectorStatus.CAPTURING;
 	    while ((frame = grabber.grab()) != null && this.isThreadActive)
 	    {
-		this.status = DetectorStatus.CAPTURING;
-
 		if (currImage == null)
 		    currImage = frame.clone();
 		else
@@ -192,19 +199,50 @@ public class Detector implements Runnable
      */
     protected void handleWarning()
     {
-        System.out.println(this.imageDifference.differencePercent + " [ " + this.options.getWarningSensibility() + " ]");
-        
+        boolean isWarning = false;
+
         if(this.imageDifference.differencePercent >= this.options.getWarningSensibility())
-            System.out.println("BEEEEEP!");
-        
+        {
+            this.warningActivationDate = new Date();
+            this.fireWarningSignalEvent(new WarningSignalEvent(this));
+            isWarning = true;
+        }
+
         
         if(this.status == DetectorStatus.WARNING)
         {
-            ///TODO: handle warning
+            
+            Date now = new Date();
+
+
+            if( now.getTime() > this.warningActivationDate.getTime() + (this.options.getWarningDuration() * 1000) )
+            {
+                //deactivate warning
+                this.warningDeactivationDate = new Date();
+                this.status = DetectorStatus.CAPTURING;
+                this.fireWarningEndedEvent(new WarningEndedEvent(this));
+            }
+
+
+        }
+        else
+        {
+            if(isWarning)
+            {
+                //activate warning
+                this.status = DetectorStatus.WARNING;
+                this.fireWarningStartedEvent(new WarningStartedEvent(this));
+            }
+
         }
     }
 
 
+    /**
+     * Adds a new warning listener
+     * @param listener the listener to add
+     * @return the same instance of {@link Detector} for method chaining
+     */
     public Detector addWarningListener(WarningListener listener)
     {
         this.warningListeners.add(WarningListener.class, listener);
@@ -212,6 +250,11 @@ public class Detector implements Runnable
     }
 
 
+    /**
+     * Removes a previously attached warning listener
+     * @param listener the previously attached listener
+     * @return the same instance of {@link Detector} for method chaining
+     */
     public Detector removeWarningListener(WarningListener listener)
     {
         this.warningListeners.remove(WarningListener.class, listener);
@@ -219,6 +262,10 @@ public class Detector implements Runnable
     }
 
 
+    /**
+     * Fires the warning started event to all the attached listeners
+     * @param event the event object
+     */
     protected void fireWarningStartedEvent(WarningStartedEvent event)
     {
         WarningListener[] listeners = this.warningListeners.getListeners(WarningListener.class);
@@ -228,13 +275,31 @@ public class Detector implements Runnable
         }
     }
 
-    
+
+    /**
+     * Fires the warning ended event to all the attached listeners
+     * @param event the event object
+     */
     protected void fireWarningEndedEvent(WarningEndedEvent event)
     {
         WarningListener[] listeners = this.warningListeners.getListeners(WarningListener.class);
         for (int i = 0; i < listeners.length; i++)
         {
             listeners[i].onWarningEnded(event);
+        }
+    }
+
+
+    /**
+     * Fires the warning ended event to all the attached listeners
+     * @param event the event object
+     */
+    protected void fireWarningSignalEvent(WarningSignalEvent event)
+    {
+        WarningListener[] listeners = this.warningListeners.getListeners(WarningListener.class);
+        for (int i = 0; i < listeners.length; i++)
+        {
+            listeners[i].onWarningSignal(event);
         }
     }
 

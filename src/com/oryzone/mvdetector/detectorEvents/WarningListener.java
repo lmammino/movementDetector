@@ -24,4 +24,12 @@ public interface WarningListener extends EventListener
      */
     public void onWarningEnded(WarningEndedEvent e);
 
+
+    /**
+     * Called when a warning movement is detected (indipendently of the current
+     * status of the Detector)
+     * @param e the event object
+     */
+    public void onWarningSignal(WarningSignalEvent e);
+
 }
