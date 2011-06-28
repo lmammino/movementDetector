@@ -11,6 +11,7 @@
 package com.oryzone.mvdetector.gui;
 
 import com.oryzone.mvdetector.Detector;
+import com.oryzone.mvdetector.DetectorOptions;
 import com.oryzone.mvdetector.detectorEvents.WarningEndedEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningListener;
 import com.oryzone.mvdetector.detectorEvents.WarningSignalEvent;
@@ -27,6 +28,7 @@ import java.util.Date;
 public class MainWindow extends javax.swing.JFrame implements WarningListener
 {
 
+    protected DetectorOptions detectorOptions;
     protected OptionsWindow optionsWindow;
     protected ConsoleWindow console;
     protected Detector detector;
@@ -60,6 +62,11 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
         btn_options = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                onFormClosing(evt);
+            }
+        });
 
         canvas.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         canvas.setPreferredSize(new java.awt.Dimension(665, 460));
@@ -114,7 +121,9 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
 
     private void initCustomComponents()
     {
-        this.optionsWindow = new OptionsWindow();
+        this.detectorOptions = new DetectorOptions();
+        this.detectorOptions.load();
+        this.optionsWindow = new OptionsWindow(this.detectorOptions);
         this.console = new ConsoleWindow();
     }
 
@@ -126,7 +135,7 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
     }
 
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
-        this.detector = new Detector();
+        this.detector = new Detector(this.detectorOptions);
         this.detector.addWarningListener(this);
         detector.start();
     }//GEN-LAST:event_btn_startActionPerformed
@@ -139,6 +148,11 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
     private void btn_optionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_optionsActionPerformed
         this.optionsWindow.setVisible(!(this.optionsWindow.isVisible()));
     }//GEN-LAST:event_btn_optionsActionPerformed
+
+    private void onFormClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onFormClosing
+        this.detectorOptions.save();
+        System.out.println("Saving options and quitting!"); ///TODO: remove this debug line
+    }//GEN-LAST:event_onFormClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_options;

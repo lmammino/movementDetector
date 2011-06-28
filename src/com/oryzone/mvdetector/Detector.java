@@ -70,7 +70,7 @@ public class Detector implements Runnable
      * List used to store the attached listeners for the warning events
      */
     protected EventListenerList warningListeners;
-
+    
     
     /**
      * Creates a new Detector instance with a given set of options
@@ -124,6 +124,7 @@ public class Detector implements Runnable
 	this.thread.start();
     }
 
+    @Override
     public void run()
     {
 	try

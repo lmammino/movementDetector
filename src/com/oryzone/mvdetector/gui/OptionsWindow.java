@@ -11,17 +11,41 @@
 
 package com.oryzone.mvdetector.gui;
 
+import com.oryzone.mvdetector.DetectorOptions;
+
 /**
  *
  * @author Luciano
  */
 public class OptionsWindow extends javax.swing.JFrame {
 
+    /**
+     * The options object reference
+     */
+    DetectorOptions options;
+
+    
     /** Creates new form Options */
-    public OptionsWindow() {
+    public OptionsWindow(DetectorOptions options) {
         initComponents();
+        this.options = options;
+        this.setValuesFromOptions();
     }
 
+
+    /**
+     * Sets all the field values from the options
+     */
+    private void setValuesFromOptions()
+    {
+        this.slider_warningSensibility.setValue((int)(options.getWarningSensibility()*100));
+        this.spinner_warningDuration.setValue(options.getWarningDuration());
+        this.spinner_frameWidth.setValue(options.getFrameDimension().width);
+        this.spinner_frameHeight.setValue(options.getFrameDimension().height);
+        this.check_coloredImageDifference.setSelected(options.usingColoredDifference());
+    }
+
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -33,16 +57,117 @@ public class OptionsWindow extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        spinner_frameWidth = new javax.swing.JSpinner();
+        spinner_frameHeight = new javax.swing.JSpinner();
+        check_coloredImageDifference = new javax.swing.JCheckBox();
+        button_reset = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jSlider1 = new javax.swing.JSlider();
+        slider_warningSensibility = new javax.swing.JSlider();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         lbl_sensibility_value = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        spinner_warningDuration = new javax.swing.JSpinner();
         jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jComboBox1 = new javax.swing.JComboBox();
+        jPanel7 = new javax.swing.JPanel();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jComboBox2 = new javax.swing.JComboBox();
+        jPanel8 = new javax.swing.JPanel();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jComboBox3 = new javax.swing.JComboBox();
+        jPanel9 = new javax.swing.JPanel();
+        jCheckBox4 = new javax.swing.JCheckBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Frame size"));
+        jPanel4.setPreferredSize(new java.awt.Dimension(350, 152));
+        jPanel4.setLayout(new java.awt.GridBagLayout());
+
+        jLabel3.setText("Height");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel4.add(jLabel3, gridBagConstraints);
+
+        jLabel5.setText("Width");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel4.add(jLabel5, gridBagConstraints);
+
+        spinner_frameWidth.setModel(new javax.swing.SpinnerNumberModel(640, 0, 9999, 1));
+        spinner_frameWidth.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                onSpinnerFrameWidthChange(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel4.add(spinner_frameWidth, gridBagConstraints);
+
+        spinner_frameHeight.setModel(new javax.swing.SpinnerNumberModel(480, 0, 9999, 1));
+        spinner_frameHeight.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                onSpinnerFrameHeightChange(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel4.add(spinner_frameHeight, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = -70;
+        jPanel3.add(jPanel4, gridBagConstraints);
+
+        check_coloredImageDifference.setText("Colored Image Difference (slower)");
+        check_coloredImageDifference.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onCheckColoredImageDifferenceAction(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
+        jPanel3.add(check_coloredImageDifference, gridBagConstraints);
+
+        button_reset.setText("Reset to default");
+        button_reset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onResetToDefaultAction(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(25, 0, 25, 0);
+        jPanel3.add(button_reset, gridBagConstraints);
+
+        jTabbedPane1.addTab("General", jPanel3);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         jPanel2.setLayout(new java.awt.GridBagLayout());
@@ -56,14 +181,19 @@ public class OptionsWindow extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         jPanel2.add(jLabel1, gridBagConstraints);
 
-        jSlider1.setValue(10);
+        slider_warningSensibility.setValue(10);
+        slider_warningSensibility.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                onSliderWarningSensibilityChange(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-        jPanel2.add(jSlider1, gridBagConstraints);
+        jPanel2.add(slider_warningSensibility, gridBagConstraints);
 
         jLabel2.setText("Duration");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -74,37 +204,178 @@ public class OptionsWindow extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         jPanel2.add(jLabel2, gridBagConstraints);
 
-        jTextField1.setText("5");
+        lbl_sensibility_value.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_sensibility_value.setText("10%");
+        lbl_sensibility_value.setPreferredSize(new java.awt.Dimension(50, 16));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jPanel2.add(lbl_sensibility_value, gridBagConstraints);
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("secs");
+        jLabel4.setPreferredSize(new java.awt.Dimension(50, 16));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jPanel2.add(jLabel4, gridBagConstraints);
+
+        spinner_warningDuration.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(5), Integer.valueOf(1), null, Integer.valueOf(1)));
+        spinner_warningDuration.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                onSpinnerWarningDurationChange(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(2, 7, 2, 7);
-        jPanel2.add(jTextField1, gridBagConstraints);
-
-        lbl_sensibility_value.setText("10%");
-        jPanel2.add(lbl_sensibility_value, new java.awt.GridBagConstraints());
-
-        jLabel4.setText("secs");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        jPanel2.add(jLabel4, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jPanel2.add(spinner_warningDuration, gridBagConstraints);
 
         jTabbedPane1.addTab("Warning", jPanel2);
 
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 289, Short.MAX_VALUE)
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        jPanel5.setLayout(new java.awt.GridBagLayout());
+
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Play sound"));
+        jPanel6.setPreferredSize(new java.awt.Dimension(300, 80));
+
+        jCheckBox1.setText("Enabled");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel6Layout.createSequentialGroup()
+                .add(6, 6, 6)
+                .add(jCheckBox1)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jComboBox1, 0, 163, Short.MAX_VALUE)
+                .add(36, 36, 36))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 324, Short.MAX_VALUE)
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel6Layout.createSequentialGroup()
+                .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jCheckBox1))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
+        jPanel5.add(jPanel6, gridBagConstraints);
+
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Play video"));
+        jPanel7.setPreferredSize(new java.awt.Dimension(300, 80));
+
+        jCheckBox2.setText("Enabled");
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel7Layout.createSequentialGroup()
+                .add(6, 6, 6)
+                .add(jCheckBox2)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jComboBox2, 0, 163, Short.MAX_VALUE)
+                .add(36, 36, 36))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel7Layout.createSequentialGroup()
+                .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jCheckBox2))
+                .addContainerGap(25, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
+        jPanel5.add(jPanel7, gridBagConstraints);
+
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Save frames"));
+        jPanel8.setPreferredSize(new java.awt.Dimension(300, 80));
+
+        jCheckBox3.setText("Enabled");
+
+        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel8Layout.createSequentialGroup()
+                .add(6, 6, 6)
+                .add(jCheckBox3)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jComboBox3, 0, 163, Short.MAX_VALUE)
+                .add(36, 36, 36))
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel8Layout.createSequentialGroup()
+                .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jComboBox3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jCheckBox3))
+                .addContainerGap(25, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
+        jPanel5.add(jPanel8, gridBagConstraints);
+
+        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Register log"));
+        jPanel9.setPreferredSize(new java.awt.Dimension(300, 80));
+
+        jCheckBox4.setText("Enabled");
+
+        org.jdesktop.layout.GroupLayout jPanel9Layout = new org.jdesktop.layout.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel9Layout.createSequentialGroup()
+                .add(6, 6, 6)
+                .add(jCheckBox4)
+                .addContainerGap(201, Short.MAX_VALUE))
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel9Layout.createSequentialGroup()
+                .add(jCheckBox4)
+                .addContainerGap(29, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
+        jPanel5.add(jPanel9, gridBagConstraints);
+
+        jScrollPane1.setViewportView(jPanel5);
+
+        jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jTabbedPane1.addTab("Actions", jPanel1);
 
@@ -112,27 +383,77 @@ public class OptionsWindow extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
+            .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void onCheckColoredImageDifferenceAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCheckColoredImageDifferenceAction
+        this.options.setUseColoredDifference(this.check_coloredImageDifference.isSelected());
+    }//GEN-LAST:event_onCheckColoredImageDifferenceAction
+
+    private void onResetToDefaultAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onResetToDefaultAction
+        this.options.loadDefaults();
+        this.setValuesFromOptions();
+    }//GEN-LAST:event_onResetToDefaultAction
+
+    private void onSpinnerFrameWidthChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_onSpinnerFrameWidthChange
+        this.options.getFrameDimension().width = (Integer)this.spinner_frameWidth.getValue();
+    }//GEN-LAST:event_onSpinnerFrameWidthChange
+
+    private void onSpinnerFrameHeightChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_onSpinnerFrameHeightChange
+        this.options.getFrameDimension().height = (Integer)this.spinner_frameHeight.getValue();
+    }//GEN-LAST:event_onSpinnerFrameHeightChange
+
+    private void onSpinnerWarningDurationChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_onSpinnerWarningDurationChange
+        this.options.setWarningDuration((Integer)this.spinner_warningDuration.getValue());
+    }//GEN-LAST:event_onSpinnerWarningDurationChange
+
+    private void onSliderWarningSensibilityChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_onSliderWarningSensibilityChange
+        this.options.setWarningSensibility((float)(this.slider_warningSensibility.getValue())/100);
+        this.lbl_sensibility_value.setText(this.slider_warningSensibility.getValue() + "%");
+    }//GEN-LAST:event_onSliderWarningSensibilityChange
+
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton button_reset;
+    private javax.swing.JCheckBox check_coloredImageDifference;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JComboBox jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JSlider jSlider1;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lbl_sensibility_value;
+    private javax.swing.JSlider slider_warningSensibility;
+    private javax.swing.JSpinner spinner_frameHeight;
+    private javax.swing.JSpinner spinner_frameWidth;
+    private javax.swing.JSpinner spinner_warningDuration;
     // End of variables declaration//GEN-END:variables
 
 }

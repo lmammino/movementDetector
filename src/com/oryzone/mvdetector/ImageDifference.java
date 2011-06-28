@@ -1,10 +1,7 @@
 package com.oryzone.mvdetector;
 
-import java.text.DecimalFormat;
-
 import com.oryzone.mvdetector.differenceStrategy.GreyscaleDifferenceStrategy;
 import com.oryzone.mvdetector.differenceStrategy.IDifferenceStrategy;
-import com.oryzone.mvdetector.differenceStrategy.RgbDifferenceStrategy;
 import static com.googlecode.javacv.cpp.opencv_core.*;
 
 /**
@@ -170,10 +167,6 @@ public class ImageDifference
 	this.diffImage = this.differenceStrategy.getDifferenceImage();
 	this.differenceAmount = this.differenceStrategy.getDifferenceAmount();
 	this.differencePercent = this.differenceStrategy.getDifferencePercent();
-
-        ///TODO: remove debug line
-	//System.out.println(new DecimalFormat("0.00")
-	//	.format(this.differencePercent * 100) + "%");
 
 	return this.differenceAmount;
     }
