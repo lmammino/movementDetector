@@ -2,7 +2,7 @@ package com.oryzone.mvdetector.warningAction;
 
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.oryzone.mvdetector.Detector;
-import com.oryzone.mvdetector.gui.ConsoleWindow;
+import com.oryzone.mvdetector.gui.LogWindow;
 import java.util.Date;
 
 /**
@@ -26,7 +26,7 @@ public class PlaySoundWarningAction extends AbstractWarningAction
      * @param detector the detector instance
      * @param audio the audio file to play
      */
-    public PlaySoundWarningAction(ConsoleWindow console, Detector detector, String audio)
+    public PlaySoundWarningAction(LogWindow console, Detector detector, String audio)
     {
         super(console, detector);
         this.audio = audio;

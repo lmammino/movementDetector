@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.oryzone.mvdetector.Detector;
-import com.oryzone.mvdetector.gui.ConsoleWindow;
+import com.oryzone.mvdetector.gui.LogWindow;
 
 /**
  * Interface used to define a warning action.
@@ -49,7 +49,7 @@ public interface IWarningAction
      * Gets the current console
      * @return a ConsoleWindow object
      */
-    public ConsoleWindow getConsole();
+    public LogWindow getConsole();
 
 
     /**

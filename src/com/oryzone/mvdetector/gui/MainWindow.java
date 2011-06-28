@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * MainWindow.java
  *
  * Created on 22-mar-2011, 0.04.32
@@ -16,32 +11,46 @@ import com.oryzone.mvdetector.detectorEvents.WarningEndedEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningListener;
 import com.oryzone.mvdetector.detectorEvents.WarningSignalEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningStartedEvent;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.util.Date;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.Timer;
 
 
 /**
  *
  * @author Luciano
  */
-public class MainWindow extends javax.swing.JFrame implements WarningListener
+public class MainWindow 
+            extends javax.swing.JFrame 
+            implements WarningListener, ActionListener
 {
 
     protected DetectorOptions detectorOptions;
     protected OptionsWindow optionsWindow;
-    protected ConsoleWindow console;
+    protected LogWindow console;
     protected Detector detector;
+    protected Timer timer;
+    protected int pendingSeconds;
+    protected Icon iconOk;
+    protected Icon iconWarning;
 
 
     public MainWindow()
     {
         initComponents();
         initCustomComponents();
-        centerInScreen();
-
-        console.toggle()
-                .log("Application started!");
+        prepareWindows();
+        
+        this.timer = new Timer(1000, this);
+        this.iconOk = new ImageIcon(getClass().getResource("/images/fine_small.png"));
+        this.iconWarning = new ImageIcon(getClass().getResource("/images/warning_small.png"));
+        
+        console.log("Application started!");
     }
 
 
@@ -55,13 +64,21 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
     private void initComponents() {
 
         canvas = new javax.swing.JPanel();
-        jToolBar1 = new javax.swing.JToolBar();
+        toolBar = new javax.swing.JToolBar();
         btn_start = new javax.swing.JButton();
         btn_stop = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
         btn_options = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
+        btn_console = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
+        jPanel1 = new javax.swing.JPanel();
+        lbl_warning = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("MovementDetector");
+        setLocation(new java.awt.Point(0, 0));
+        setMinimumSize(new java.awt.Dimension(243, 30));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 onFormClosing(evt);
@@ -73,11 +90,12 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
         canvas.setLayout(new java.awt.BorderLayout());
         getContentPane().add(canvas, java.awt.BorderLayout.CENTER);
 
-        jToolBar1.setBorder(null);
-        jToolBar1.setRollover(true);
+        toolBar.setBorder(null);
+        toolBar.setRollover(true);
 
         btn_start.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/media-record.png"))); // NOI18N
         btn_start.setText("Start");
+        btn_start.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         btn_start.setFocusable(false);
         btn_start.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_start.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -86,10 +104,11 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
                 btn_startActionPerformed(evt);
             }
         });
-        jToolBar1.add(btn_start);
+        toolBar.add(btn_start);
 
         btn_stop.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/media-playback-stop.png"))); // NOI18N
         btn_stop.setText("Stop");
+        btn_stop.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         btn_stop.setFocusable(false);
         btn_stop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_stop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -98,11 +117,12 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
                 btn_stopActionPerformed(evt);
             }
         });
-        jToolBar1.add(btn_stop);
-        jToolBar1.add(jSeparator1);
+        toolBar.add(btn_stop);
+        toolBar.add(jSeparator1);
 
         btn_options.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/preferences-system.png"))); // NOI18N
         btn_options.setText("Options");
+        btn_options.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         btn_options.setFocusable(false);
         btn_options.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_options.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -111,9 +131,36 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
                 btn_optionsActionPerformed(evt);
             }
         });
-        jToolBar1.add(btn_options);
+        toolBar.add(btn_options);
+        toolBar.add(jSeparator2);
 
-        getContentPane().add(jToolBar1, java.awt.BorderLayout.NORTH);
+        btn_console.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/log.png"))); // NOI18N
+        btn_console.setText("Log window");
+        btn_console.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        btn_console.setFocusable(false);
+        btn_console.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btn_console.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btn_console.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_consoleActionPerformed(evt);
+            }
+        });
+        toolBar.add(btn_console);
+        toolBar.add(jSeparator3);
+
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        lbl_warning.setForeground(new java.awt.Color(0, 204, 51));
+        lbl_warning.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbl_warning.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/fine_small.png"))); // NOI18N
+        lbl_warning.setLabelFor(lbl_warning);
+        lbl_warning.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 15));
+        lbl_warning.setDoubleBuffered(true);
+        jPanel1.add(lbl_warning, java.awt.BorderLayout.CENTER);
+
+        toolBar.add(jPanel1);
+
+        getContentPane().add(toolBar, java.awt.BorderLayout.NORTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -124,14 +171,17 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
         this.detectorOptions = new DetectorOptions();
         this.detectorOptions.load();
         this.optionsWindow = new OptionsWindow(this.detectorOptions);
-        this.console = new ConsoleWindow();
+        this.console = new LogWindow();
     }
 
-    private void centerInScreen()
+    private void prepareWindows()
     {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation((dim.width-this.getSize().width)/2,
-                        (dim.height-this.getSize().height)/2);
+        this.setPreferredSize(new Dimension(dim.width, this.toolBar.getHeight()));
+        this.setSize(new Dimension(dim.width, this.toolBar.getHeight() + 30));
+        this.setLocation(0, 0);
+        this.optionsWindow.setLocation(20, this.getLocation().y + this.getHeight() + 40);
+        this.console.setLocation(20, this.getLocation().y + this.getHeight() + 40);
     }
 
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
@@ -154,35 +204,63 @@ public class MainWindow extends javax.swing.JFrame implements WarningListener
         System.out.println("Saving options and quitting!"); ///TODO: remove this debug line
     }//GEN-LAST:event_onFormClosing
 
+    private void btn_consoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_consoleActionPerformed
+        this.console.setVisible(!this.console.isVisible());
+    }//GEN-LAST:event_btn_consoleActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_console;
     private javax.swing.JButton btn_options;
     private javax.swing.JButton btn_start;
     private javax.swing.JButton btn_stop;
     private javax.swing.JPanel canvas;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JToolBar.Separator jSeparator1;
-    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
+    private javax.swing.JLabel lbl_warning;
+    private javax.swing.JToolBar toolBar;
     // End of variables declaration//GEN-END:variables
 
+    
+    @Override
+    public void actionPerformed(ActionEvent ae)
+    {
+        //reacts to timer actions
+        if( ae.getSource() instanceof Timer )
+        {
+            this.pendingSeconds = this.pendingSeconds - 1;
+            this.lbl_warning.setText("- " + this.pendingSeconds + " secs");
+        }
+    }
 
     @Override
     public void onWarningStarted(WarningStartedEvent e)
     {
-        Date d = new Date();
+        this.timer.start();
         this.console.log("*** WARNING STARTED");
+        this.lbl_warning.setText("");
+        this.lbl_warning.setIcon(this.iconWarning);
+        this.lbl_warning.setForeground(Color.RED);
     }
 
 
     @Override
     public void onWarningEnded(WarningEndedEvent e)
     {
-        Date d = new Date();
+        this.timer.stop();
         this.console.log("*** WARNING ENDED");
+        this.lbl_warning.setText("");
+        this.lbl_warning.setIcon(this.iconOk);
+        this.lbl_warning.setForeground(Color.GREEN);
     }
 
 
     @Override
     public void onWarningSignal(WarningSignalEvent e)
     {
+        this.pendingSeconds = this.optionsWindow.options.getWarningDuration() + 1;
+        Toolkit.getDefaultToolkit().beep();
         this.console.log( ""+(e.getDetector().getImageDifference().getDifferencePercent()) );
     }
 }

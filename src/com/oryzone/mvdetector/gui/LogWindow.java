@@ -20,13 +20,13 @@ import javax.swing.DefaultListModel;
  *
  * @author Luciano
  */
-public class ConsoleWindow extends javax.swing.JFrame {
+public class LogWindow extends javax.swing.JFrame {
 
     protected DefaultListModel data;
     
 
     /** Creates new form ConsoleWindow */
-    public ConsoleWindow(){
+    public LogWindow(){
         initComponents();
         data = new DefaultListModel();
         this.list.setModel(data);
@@ -45,8 +45,8 @@ public class ConsoleWindow extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         list = new javax.swing.JList();
 
-        setTitle("Console");
-        setPreferredSize(new java.awt.Dimension(620, 280));
+        setTitle("Log Window");
+        setPreferredSize(new java.awt.Dimension(600, 280));
         setSize(new java.awt.Dimension(600, 280));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -55,7 +55,7 @@ public class ConsoleWindow extends javax.swing.JFrame {
         jScrollPane1.setBorder(null);
         jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        list.setFont(new java.awt.Font("Consolas", 0, 12)); // NOI18N
+        list.setFont(new java.awt.Font("Consolas", 0, 12));
         jScrollPane1.setViewportView(list);
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -78,7 +78,7 @@ public class ConsoleWindow extends javax.swing.JFrame {
      * @param message the message to add
      * @return the same instance of the console (for method chaining)
      */
-    public ConsoleWindow log(String message)
+    public LogWindow log(String message)
     {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
@@ -91,7 +91,7 @@ public class ConsoleWindow extends javax.swing.JFrame {
      * Clears the console.
      * @return the same instance of the console (for method chaining)
      */
-    public ConsoleWindow clear()
+    public LogWindow clear()
     {
         data.clear();
         return this;
@@ -102,7 +102,7 @@ public class ConsoleWindow extends javax.swing.JFrame {
      * Toggle the visibility of the console
      * @return the same instance of the console (for method chaining)
      */
-    public ConsoleWindow toggle()
+    public LogWindow toggle()
     {
         this.setVisible(!this.isVisible());
         return this;

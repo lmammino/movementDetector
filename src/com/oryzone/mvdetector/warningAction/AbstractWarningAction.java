@@ -2,7 +2,7 @@ package com.oryzone.mvdetector.warningAction;
 
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.oryzone.mvdetector.Detector;
-import com.oryzone.mvdetector.gui.ConsoleWindow;
+import com.oryzone.mvdetector.gui.LogWindow;
 import java.util.Date;
 
 /**
@@ -16,7 +16,7 @@ public class AbstractWarningAction implements IWarningAction{
     /**
      * The current console window instance
      */
-    protected ConsoleWindow console;
+    protected LogWindow console;
 
 
     /**
@@ -30,7 +30,7 @@ public class AbstractWarningAction implements IWarningAction{
      * instance
      * @param console the console instance to use
      */
-    public AbstractWarningAction(ConsoleWindow console, Detector detector)
+    public AbstractWarningAction(LogWindow console, Detector detector)
     {
         this.console = console;
         this.detector = detector;
@@ -59,7 +59,7 @@ public class AbstractWarningAction implements IWarningAction{
 
 
     @Override
-    public ConsoleWindow getConsole()
+    public LogWindow getConsole()
     {
         return this.console;
     }

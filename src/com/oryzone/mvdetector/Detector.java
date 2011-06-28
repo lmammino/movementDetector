@@ -1,5 +1,6 @@
 package com.oryzone.mvdetector;
 
+import java.awt.Dimension;
 import com.oryzone.mvdetector.detectorEvents.WarningSignalEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningEndedEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningStartedEvent;
@@ -7,6 +8,7 @@ import com.oryzone.mvdetector.detectorEvents.WarningListener;
 import javax.swing.event.EventListenerList;
 import java.util.Date;
 import com.googlecode.javacv.*;
+import java.awt.Toolkit;
 import static com.googlecode.javacv.cpp.opencv_core.*;
 
 /**
@@ -85,6 +87,8 @@ public class Detector implements Runnable
 	this.grabber = new OpenCVFrameGrabber(0);
 	this.canvasFrame = new CanvasFrame("Capturing");
 	this.canvasFrame.setCanvasSize(640, 480);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.canvasFrame.setLocation(dim.width/2 - 320, dim.height/2 - 240);
 	this.grabber.setImageWidth(640);
 	this.grabber.setImageHeight(480);
 	this.imageDifference = new ImageDifference();

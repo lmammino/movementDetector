@@ -87,6 +87,8 @@ public class OptionsWindow extends javax.swing.JFrame {
         jPanel9 = new javax.swing.JPanel();
         jCheckBox4 = new javax.swing.JCheckBox();
 
+        setTitle("Options");
+
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Frame size"));

@@ -2,7 +2,7 @@ package com.oryzone.mvdetector.warningAction;
 
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.oryzone.mvdetector.Detector;
-import com.oryzone.mvdetector.gui.ConsoleWindow;
+import com.oryzone.mvdetector.gui.LogWindow;
 import java.util.Date;
 
 /**
@@ -14,7 +14,7 @@ import java.util.Date;
 public class RegisterLogWarningAction extends AbstractWarningAction
 {
 
-    public RegisterLogWarningAction(ConsoleWindow console, Detector detector)
+    public RegisterLogWarningAction(LogWindow console, Detector detector)
     {
         super(console, detector);
     }
