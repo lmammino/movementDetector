@@ -38,17 +38,19 @@ public class MainWindow
     protected int pendingSeconds;
     protected Icon iconOk;
     protected Icon iconWarning;
+    protected Thread thread;
 
 
     public MainWindow()
     {
         initComponents();
         initCustomComponents();
-        prepareWindows();
         
         this.timer = new Timer(1000, this);
         this.iconOk = new ImageIcon(getClass().getResource("/images/fine_small.png"));
         this.iconWarning = new ImageIcon(getClass().getResource("/images/warning_small.png"));
+        
+        prepareWindows();
         
         console.log("Application started!");
     }
@@ -185,13 +187,17 @@ public class MainWindow
     }
 
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
+             //detector.start();
         this.detector = new Detector(this.detectorOptions);
         this.detector.addWarningListener(this);
-        detector.start();
+        //this.thread = new Thread(this.detector);
+        //this.thread.start();
+        this.detector.start();
     }//GEN-LAST:event_btn_startActionPerformed
 
     private void btn_stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_stopActionPerformed
-        this.detector.stop();
+        this.detector.beforeStop();
+        this.detector.destroy();
         this.detector = null;
     }//GEN-LAST:event_btn_stopActionPerformed
 

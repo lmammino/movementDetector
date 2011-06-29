@@ -5,6 +5,8 @@ import com.oryzone.mvdetector.detectorEvents.WarningSignalEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningEndedEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningStartedEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 import java.util.Date;
 import com.googlecode.javacv.*;
@@ -18,7 +20,7 @@ import static com.googlecode.javacv.cpp.opencv_core.*;
  * @author Andrea Mangano, Luciano Mammino
  * @version 1.0
  */
-public class Detector implements Runnable
+public class Detector extends Thread
 {
     /**
      * The current status of the detector
@@ -33,7 +35,7 @@ public class Detector implements Runnable
     /**
      * The stream frame grabber
      */
-    protected OpenCVFrameGrabber grabber;
+    protected FrameGrabber grabber;
 
     /**
      * The frame used to display the video stream
@@ -51,28 +53,22 @@ public class Detector implements Runnable
     protected Thread thread;
 
     /**
-     * Flag used to activate/deactivate the Thread
-     */
-    protected boolean isThreadActive = false;
-
-
-    /**
      * The date when the last warning occurred
      */
     protected Date warningActivationDate;
-
 
     /**
      * The date when the last warning period ended
      */
     protected Date warningDeactivationDate;
-    
 
     /**
      * List used to store the attached listeners for the warning events
      */
     protected EventListenerList warningListeners;
     
+    
+    protected boolean grabStarted = false;
     
     /**
      * Creates a new Detector instance with a given set of options
@@ -82,15 +78,9 @@ public class Detector implements Runnable
      */
     public Detector(DetectorOptions options)
     {
-	this.options = options;
+        
+        this.options = options;
 	this.status = DetectorStatus.STOPPED;
-	this.grabber = new OpenCVFrameGrabber(0);
-	this.canvasFrame = new CanvasFrame("Capturing");
-	this.canvasFrame.setCanvasSize(640, 480);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.canvasFrame.setLocation(dim.width/2 - 320, dim.height/2 - 240);
-	this.grabber.setImageWidth(640);
-	this.grabber.setImageHeight(480);
 	this.imageDifference = new ImageDifference();
         this.warningListeners = new EventListenerList();
     }
@@ -119,31 +109,38 @@ public class Detector implements Runnable
      * @throws Exception
      *             in case of every kind of exception
      */
-    public void start()
-    {
-	if (this.thread == null)
-	    this.thread = new Thread(this);
-
-	this.isThreadActive = true;
-	this.thread.start();
-    }
+//    public void start()
+//    {
+//	//this.thread = new Thread(this);
+//        //this.thread.start();
+//    }
 
     @Override
     public void run()
     {
-	try
+        try
 	{
-	    this.canvasFrame.setCanvasSize(640, 480);
+	    this.grabber = new OpenCVFrameGrabber(0);
+
+            this.canvasFrame = new CanvasFrame("Capturing");
+            this.canvasFrame.setVisible(false);
+            this.canvasFrame.setCanvasSize(640, 480);
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            this.canvasFrame.setLocation(dim.width/2 - 320, dim.height/2 - 240);
+            this.grabber.setImageWidth(640);
+            this.grabber.setImageHeight(480);
 
 	    this.status = DetectorStatus.STARTED;
 	    this.grabber.start();
+            this.grabStarted = true;
+            this.canvasFrame.setVisible(true);
 
-	    IplImage frame = grabber.grab();
+	    IplImage frame = this.grabber.grab();
 	    IplImage currImage = null;
 	    IplImage prevImage = null;
 
             this.status = DetectorStatus.CAPTURING;
-	    while ((frame = grabber.grab()) != null && this.isThreadActive)
+	    while (this.grabStarted && (frame = this.grabber.grab()) != null)
 	    {
 		if (currImage == null)
 		    currImage = frame.clone();
@@ -163,6 +160,7 @@ public class Detector implements Runnable
 
                     this.handleWarning();
 		}
+                
 	    }
 	    this.status = DetectorStatus.STOPPED;
 	} catch (Exception e)
@@ -174,18 +172,37 @@ public class Detector implements Runnable
     /**
      * Stops the detection
      */
-    public void stop()
+    public void beforeStop()
     {
-	this.canvasFrame.setVisible(false);
-	this.isThreadActive = false;
-	this.status = DetectorStatus.STOPPED;
-	try
+	this.grabStarted = false;
+        
+        try
 	{
-	    grabber.stop();
-	} catch (Exception e)
+            this.grabber.stop();
+            this.canvasFrame.setVisible(false);
+            this.status = DetectorStatus.STOPPED;
+        } catch (Exception ex)
 	{
-	    e.printStackTrace();
+	    Logger.getLogger(Detector.class.getName()).log(Level.SEVERE, null, ex);
 	}
+    }
+    
+    @Override
+    public void destroy()
+    {
+        this.canvasFrame.dispose();
+        try
+        {
+            this.grabber.release();
+        } catch (Exception ex)
+        {
+            Logger.getLogger(Detector.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally
+        {
+            this.grabber = null;
+            System.gc();
+        }
     }
 
     /**
