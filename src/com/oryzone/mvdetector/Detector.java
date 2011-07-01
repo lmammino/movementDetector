@@ -36,6 +36,11 @@ public class Detector extends Thread
      * The stream frame grabber
      */
     protected FrameGrabber grabber;
+    
+    /**
+     * The last acquired frame
+     */
+    protected IplImage lastFrame;
 
     /**
      * The frame used to display the video stream
@@ -104,16 +109,15 @@ public class Detector extends Thread
     }
 
     /**
-     * Starts the detection from the camera stream
-     * 
-     * @throws Exception
-     *             in case of every kind of exception
+     * gets the last captured frame
+     * @return the last captured frame
      */
-//    public void start()
-//    {
-//	//this.thread = new Thread(this);
-//        //this.thread.start();
-//    }
+    public IplImage getLastFrame()
+    {
+        return this.lastFrame;
+    }
+
+    
 
     @Override
     public void run()
@@ -135,19 +139,19 @@ public class Detector extends Thread
             this.grabStarted = true;
             this.canvasFrame.setVisible(true);
 
-	    IplImage frame = this.grabber.grab();
+	    this.lastFrame = this.grabber.grab();
 	    IplImage currImage = null;
 	    IplImage prevImage = null;
 
             this.status = DetectorStatus.CAPTURING;
-	    while (this.grabStarted && (frame = this.grabber.grab()) != null)
+	    while (this.grabStarted && (this.lastFrame = this.grabber.grab()) != null)
 	    {
 		if (currImage == null)
-		    currImage = frame.clone();
+		    currImage = this.lastFrame.clone();
 		else
 		{
 		    prevImage = currImage.clone();
-		    currImage = frame.clone();
+		    currImage = this.lastFrame.clone();
 		}
 
 		if (prevImage != null && currImage != null)

@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * Options.java
  *
  * Created on 22-mar-2011, 2.08.36
@@ -43,6 +38,13 @@ public class OptionsWindow extends javax.swing.JFrame {
         this.spinner_frameWidth.setValue(options.getFrameDimension().width);
         this.spinner_frameHeight.setValue(options.getFrameDimension().height);
         this.check_coloredImageDifference.setSelected(options.usingColoredDifference());
+        this.check_action_playBeep.setSelected(options.isActionPlayBeepSoundEnabled());
+        this.check_actionSaveFrames.setSelected(options.isActionSaveFramesEnabled());
+        this.check_actionFaceDetection.setSelected(options.isActionSaveFramesUseFaceDetection());
+        this.check_registerLog.setSelected(options.isActionRegisterLogEnabled());
+        this.check_shellCommand.setSelected(options.isActionExecuteCommandEnabled());
+        this.text_shellCommand.setText(options.getActionExecuteCommandText());
+        this.text_shellCommand.setEnabled(options.isActionExecuteCommandEnabled());
     }
 
     
@@ -76,16 +78,15 @@ public class OptionsWindow extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jComboBox1 = new javax.swing.JComboBox();
-        jPanel7 = new javax.swing.JPanel();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jComboBox2 = new javax.swing.JComboBox();
+        check_action_playBeep = new javax.swing.JCheckBox();
         jPanel8 = new javax.swing.JPanel();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jComboBox3 = new javax.swing.JComboBox();
+        check_actionSaveFrames = new javax.swing.JCheckBox();
+        check_actionFaceDetection = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
-        jCheckBox4 = new javax.swing.JCheckBox();
+        check_registerLog = new javax.swing.JCheckBox();
+        jPanel7 = new javax.swing.JPanel();
+        check_shellCommand = new javax.swing.JCheckBox();
+        text_shellCommand = new javax.swing.JTextField();
 
         setTitle("Options");
 
@@ -241,66 +242,81 @@ public class OptionsWindow extends javax.swing.JFrame {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
+        jScrollPane1.setBorder(null);
+        jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Play sound"));
-        jPanel6.setPreferredSize(new java.awt.Dimension(300, 80));
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Play system BEEP"));
+        jPanel6.setPreferredSize(new java.awt.Dimension(300, 60));
 
-        jCheckBox1.setText("Enabled");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        check_action_playBeep.setText("Enabled");
+        check_action_playBeep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onCheckActionPlayBeepChange(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel6Layout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(jCheckBox1)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jComboBox1, 0, 163, Short.MAX_VALUE)
-                .add(36, 36, 36))
+                .addContainerGap()
+                .add(check_action_playBeep)
+                .addContainerGap(190, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel6Layout.createSequentialGroup()
-                .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jCheckBox1))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .add(check_action_playBeep)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
         jPanel5.add(jPanel6, gridBagConstraints);
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Play video"));
-        jPanel7.setPreferredSize(new java.awt.Dimension(300, 80));
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Save frames"));
+        jPanel8.setPreferredSize(new java.awt.Dimension(300, 80));
 
-        jCheckBox2.setText("Enabled");
+        check_actionSaveFrames.setText("Enabled");
+        check_actionSaveFrames.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onCheckActionSaveFrameChanged(evt);
+            }
+        });
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        check_actionFaceDetection.setText("FaceDetection");
+        check_actionFaceDetection.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onCheckActionFaceDetectionChanged(evt);
+            }
+        });
 
-        org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel7Layout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(jCheckBox2)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jComboBox2, 0, 163, Short.MAX_VALUE)
-                .add(36, 36, 36))
+        org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel8Layout.createSequentialGroup()
+                .add(17, 17, 17)
+                .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel8Layout.createSequentialGroup()
+                        .add(check_actionFaceDetection)
+                        .addContainerGap())
+                    .add(jPanel8Layout.createSequentialGroup()
+                        .add(check_actionSaveFrames, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(210, 210, 210))))
         );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel7Layout.createSequentialGroup()
-                .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jCheckBox2))
-                .addContainerGap(25, Short.MAX_VALUE))
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel8Layout.createSequentialGroup()
+                .add(check_actionSaveFrames)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(check_actionFaceDetection)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -309,33 +325,32 @@ public class OptionsWindow extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
-        jPanel5.add(jPanel7, gridBagConstraints);
+        jPanel5.add(jPanel8, gridBagConstraints);
 
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Save frames"));
-        jPanel8.setPreferredSize(new java.awt.Dimension(300, 80));
+        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Register log"));
+        jPanel9.setPreferredSize(new java.awt.Dimension(300, 60));
 
-        jCheckBox3.setText("Enabled");
+        check_registerLog.setText("Enabled");
+        check_registerLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onCheckRegisterLogChanged(evt);
+            }
+        });
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel8Layout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(jCheckBox3)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jComboBox3, 0, 163, Short.MAX_VALUE)
-                .add(36, 36, 36))
+        org.jdesktop.layout.GroupLayout jPanel9Layout = new org.jdesktop.layout.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(check_registerLog)
+                .addContainerGap(190, Short.MAX_VALUE))
         );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel8Layout.createSequentialGroup()
-                .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jComboBox3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jCheckBox3))
-                .addContainerGap(25, Short.MAX_VALUE))
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel9Layout.createSequentialGroup()
+                .add(check_registerLog)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -344,36 +359,51 @@ public class OptionsWindow extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
-        jPanel5.add(jPanel8, gridBagConstraints);
+        jPanel5.add(jPanel9, gridBagConstraints);
 
-        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Register log"));
-        jPanel9.setPreferredSize(new java.awt.Dimension(300, 80));
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Execute shell command"));
+        jPanel7.setPreferredSize(new java.awt.Dimension(300, 90));
+        jPanel7.setSize(new java.awt.Dimension(100, 90));
 
-        jCheckBox4.setText("Enabled");
+        check_shellCommand.setText("Enabled");
+        check_shellCommand.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onActionExecuteShellCommandChanged(evt);
+            }
+        });
 
-        org.jdesktop.layout.GroupLayout jPanel9Layout = new org.jdesktop.layout.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel9Layout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(jCheckBox4)
-                .addContainerGap(201, Short.MAX_VALUE))
+        text_shellCommand.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                onTextShellCommandChange(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(text_shellCommand, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                    .add(check_shellCommand))
+                .addContainerGap())
         );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel9Layout.createSequentialGroup()
-                .add(jCheckBox4)
-                .addContainerGap(29, Short.MAX_VALUE))
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel7Layout.createSequentialGroup()
+                .add(check_shellCommand)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(text_shellCommand, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
-        jPanel5.add(jPanel9, gridBagConstraints);
+        jPanel5.add(jPanel7, gridBagConstraints);
 
         jScrollPane1.setViewportView(jPanel5);
 
@@ -389,9 +419,7 @@ public class OptionsWindow extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 415, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -423,18 +451,41 @@ public class OptionsWindow extends javax.swing.JFrame {
         this.lbl_sensibility_value.setText(this.slider_warningSensibility.getValue() + "%");
     }//GEN-LAST:event_onSliderWarningSensibilityChange
 
+    private void onCheckActionPlayBeepChange(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCheckActionPlayBeepChange
+        this.options.setActionPlayBeepSoundEnabled(this.check_action_playBeep.isSelected());
+    }//GEN-LAST:event_onCheckActionPlayBeepChange
+
+    private void onCheckActionSaveFrameChanged(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCheckActionSaveFrameChanged
+        this.options.setActionSaveFramesEnabled(this.check_actionSaveFrames.isSelected());
+    }//GEN-LAST:event_onCheckActionSaveFrameChanged
+
+    private void onCheckActionFaceDetectionChanged(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCheckActionFaceDetectionChanged
+        this.options.setActionSaveFramesUseFaceDetection(this.check_actionFaceDetection.isSelected());
+    }//GEN-LAST:event_onCheckActionFaceDetectionChanged
+
+    private void onCheckRegisterLogChanged(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCheckRegisterLogChanged
+        this.options.setActionRegisterLogEnabled(this.check_registerLog.isSelected());
+    }//GEN-LAST:event_onCheckRegisterLogChanged
+
+    private void onActionExecuteShellCommandChanged(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onActionExecuteShellCommandChanged
+        this.options.setActionExecuteCommandEnabled(this.check_shellCommand.isSelected());
+        this.text_shellCommand.setEnabled(this.check_shellCommand.isSelected());
+    }//GEN-LAST:event_onActionExecuteShellCommandChanged
+
+    private void onTextShellCommandChange(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_onTextShellCommandChange
+        this.options.setActionExecuteCommandText(this.text_shellCommand.getText());
+    }//GEN-LAST:event_onTextShellCommandChange
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_reset;
+    private javax.swing.JCheckBox check_actionFaceDetection;
+    private javax.swing.JCheckBox check_actionSaveFrames;
+    private javax.swing.JCheckBox check_action_playBeep;
     private javax.swing.JCheckBox check_coloredImageDifference;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
-    private javax.swing.JComboBox jComboBox3;
+    private javax.swing.JCheckBox check_registerLog;
+    private javax.swing.JCheckBox check_shellCommand;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -456,6 +507,7 @@ public class OptionsWindow extends javax.swing.JFrame {
     private javax.swing.JSpinner spinner_frameHeight;
     private javax.swing.JSpinner spinner_frameWidth;
     private javax.swing.JSpinner spinner_warningDuration;
+    private javax.swing.JTextField text_shellCommand;
     // End of variables declaration//GEN-END:variables
 
 }

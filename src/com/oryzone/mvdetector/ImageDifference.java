@@ -1,5 +1,6 @@
 package com.oryzone.mvdetector;
 
+import com.oryzone.mvdetector.differenceStrategy.RgbDifferenceStrategy;
 import com.oryzone.mvdetector.differenceStrategy.GreyscaleDifferenceStrategy;
 import com.oryzone.mvdetector.differenceStrategy.IDifferenceStrategy;
 import static com.googlecode.javacv.cpp.opencv_core.*;
@@ -57,7 +58,7 @@ public class ImageDifference
 	this.currImage = null;
 	this.diffImage = null;
 	this.differenceAmount = 0;
-	this.differenceStrategy = new GreyscaleDifferenceStrategy();
+	this.differenceStrategy = new RgbDifferenceStrategy();
     }
 
     /**
