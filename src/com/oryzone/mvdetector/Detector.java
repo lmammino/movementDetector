@@ -1,5 +1,7 @@
 package com.oryzone.mvdetector;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import com.oryzone.mvdetector.differenceStrategy.IDifferenceStrategy;
 import com.oryzone.mvdetector.detectorEvents.DetectorStateChangedEvent;
 import com.oryzone.mvdetector.detectorEvents.DetectorStateChangedListener;
@@ -136,7 +138,6 @@ public class Detector extends Thread
     }
 
     
-
     @Override
     public void run()
     {
@@ -151,6 +152,33 @@ public class Detector extends Thread
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
             this.canvasFrame.setLocation(dim.width/2 - this.options.getFrameDimension().width/2,
                                          dim.height/2 - this.options.getFrameDimension().height/2);
+            this.canvasFrame.addWindowListener(new WindowListener(){
+
+                @Override
+                public void windowOpened(WindowEvent we){}
+
+                @Override
+                public void windowClosing(WindowEvent we)
+                {
+                    setDetectorState(DetectorState.STOPPED);
+                }
+
+                @Override
+                public void windowClosed(WindowEvent we){}
+
+                @Override
+                public void windowIconified(WindowEvent we){}
+
+                @Override
+                public void windowDeiconified(WindowEvent we){}
+
+                @Override
+                public void windowActivated(WindowEvent we){}
+
+                @Override
+                public void windowDeactivated(WindowEvent we){}
+                
+            });
             this.grabber.setImageWidth(this.options.getFrameDimension().width);
             this.grabber.setImageHeight(this.options.getFrameDimension().height);
 
