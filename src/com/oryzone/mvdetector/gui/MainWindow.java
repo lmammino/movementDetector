@@ -1,8 +1,3 @@
-/*
- * MainWindow.java
- *
- * Created on 22-mar-2011, 0.04.32
- */
 package com.oryzone.mvdetector.gui;
 
 import com.oryzone.mvdetector.Detector;
@@ -23,8 +18,9 @@ import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
 /**
- *
- * @author Luciano
+ * Main UI
+ * @author Luciano Mammino, Andrea Mangano
+ * @version 1.0
  */
 public class MainWindow 
             extends javax.swing.JFrame 

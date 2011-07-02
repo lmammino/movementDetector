@@ -1,5 +1,6 @@
 package com.oryzone.mvdetector;
 
+import com.oryzone.mvdetector.differenceStrategy.IDifferenceStrategy;
 import com.oryzone.mvdetector.detectorEvents.DetectorStateChangedEvent;
 import com.oryzone.mvdetector.detectorEvents.DetectorStateChangedListener;
 import java.awt.Dimension;
@@ -12,6 +13,8 @@ import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 import java.util.Date;
 import com.googlecode.javacv.*;
+import com.oryzone.mvdetector.differenceStrategy.GreyscaleDifferenceStrategy;
+import com.oryzone.mvdetector.differenceStrategy.RgbDifferenceStrategy;
 import java.awt.Toolkit;
 import static com.googlecode.javacv.cpp.opencv_core.*;
 
@@ -93,7 +96,14 @@ public class Detector extends Thread
         
         this.options = options;
 	this.state = DetectorState.STOPPED;
-	this.imageDifference = new ImageDifference();
+        
+        IDifferenceStrategy differenceStrategy;
+        if(this.options.usingColoredDifference())
+            differenceStrategy = new RgbDifferenceStrategy();
+        else
+            differenceStrategy = new GreyscaleDifferenceStrategy();
+	this.imageDifference = new ImageDifference(differenceStrategy);
+        
         this.warningListeners = new EventListenerList();
         this.stateChangedListeners = new EventListenerList();
     }
@@ -136,11 +146,13 @@ public class Detector extends Thread
 
             this.canvasFrame = new CanvasFrame("Capturing");
             this.canvasFrame.setVisible(false);
-            this.canvasFrame.setCanvasSize(640, 480);
+            this.canvasFrame.setCanvasSize(this.options.getFrameDimension().width,
+                                           this.options.getFrameDimension().height);
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-            this.canvasFrame.setLocation(dim.width/2 - 320, dim.height/2 - 240);
-            this.grabber.setImageWidth(640);
-            this.grabber.setImageHeight(480);
+            this.canvasFrame.setLocation(dim.width/2 - this.options.getFrameDimension().width/2,
+                                         dim.height/2 - this.options.getFrameDimension().height/2);
+            this.grabber.setImageWidth(this.options.getFrameDimension().width);
+            this.grabber.setImageHeight(this.options.getFrameDimension().height);
 
 	    this.setDetectorState(DetectorState.STARTED);
 	    this.grabber.start();
