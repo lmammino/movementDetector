@@ -7,6 +7,8 @@ package com.oryzone.mvdetector.gui;
 
 import com.oryzone.mvdetector.Detector;
 import com.oryzone.mvdetector.DetectorOptions;
+import com.oryzone.mvdetector.detectorEvents.DetectorStateChangedEvent;
+import com.oryzone.mvdetector.detectorEvents.DetectorStateChangedListener;
 import com.oryzone.mvdetector.detectorEvents.WarningEndedEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningListener;
 import com.oryzone.mvdetector.detectorEvents.WarningSignalEvent;
@@ -26,7 +28,9 @@ import javax.swing.Timer;
  */
 public class MainWindow 
             extends javax.swing.JFrame 
-            implements WarningListener, ActionListener
+            implements WarningListener, 
+                       DetectorStateChangedListener,
+                       ActionListener
 {
 
     protected DetectorOptions detectorOptions;
@@ -37,6 +41,7 @@ public class MainWindow
     protected int pendingSeconds;
     protected Icon iconOk;
     protected Icon iconWarning;
+    protected Icon iconCapturing;
     protected Thread thread;
 
 
@@ -48,6 +53,7 @@ public class MainWindow
         this.timer = new Timer(1000, this);
         this.iconOk = new ImageIcon(getClass().getResource("/images/fine_small.png"));
         this.iconWarning = new ImageIcon(getClass().getResource("/images/warning_small.png"));
+        this.iconCapturing = new ImageIcon(getClass().getResource("/images/recording_small.png"));
         
         prepareWindows();
         
@@ -186,11 +192,9 @@ public class MainWindow
     }
 
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
-             //detector.start();
         this.detector = new Detector(this.detectorOptions);
         this.detector.addWarningListener(this);
-        //this.thread = new Thread(this.detector);
-        //this.thread.start();
+        this.detector.addStateChangedListener(this); 
         this.detector.start();
     }//GEN-LAST:event_btn_startActionPerformed
 
@@ -206,7 +210,6 @@ public class MainWindow
 
     private void onFormClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onFormClosing
         this.detectorOptions.save();
-        System.out.println("Saving options and quitting!"); ///TODO: remove this debug line
     }//GEN-LAST:event_onFormClosing
 
     private void btn_consoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_consoleActionPerformed
@@ -244,9 +247,6 @@ public class MainWindow
     {
         this.timer.start();
         this.console.log("*** WARNING STARTED");
-        this.lbl_warning.setText("");
-        this.lbl_warning.setIcon(this.iconWarning);
-        this.lbl_warning.setForeground(Color.RED);
     }
 
 
@@ -255,9 +255,7 @@ public class MainWindow
     {
         this.timer.stop();
         this.console.log("*** WARNING ENDED");
-        this.lbl_warning.setText("");
-        this.lbl_warning.setIcon(this.iconOk);
-        this.lbl_warning.setForeground(Color.GREEN);
+        
     }
 
 
@@ -267,5 +265,31 @@ public class MainWindow
         this.pendingSeconds = this.optionsWindow.options.getWarningDuration() + 1;
         Toolkit.getDefaultToolkit().beep();
         this.console.log( ""+(e.getDetector().getImageDifference().getDifferencePercent()) );
+    }
+
+
+    @Override
+    public void onDetectorStateChanged(DetectorStateChangedEvent e)
+    {
+        switch(e.getNewState())
+        {
+            case STARTED:
+            case STOPPED:
+                this.lbl_warning.setText("");
+                this.lbl_warning.setIcon(this.iconOk);
+                this.lbl_warning.setForeground(Color.GREEN);
+                break;
+            case CAPTURING:
+                this.lbl_warning.setText("");
+                this.lbl_warning.setIcon(this.iconCapturing);
+                this.lbl_warning.setForeground(Color.BLACK);
+                break;
+                
+            case WARNING:
+                this.lbl_warning.setText("");
+                this.lbl_warning.setIcon(this.iconWarning);
+                this.lbl_warning.setForeground(Color.RED);
+                break;
+        }
     }
 }

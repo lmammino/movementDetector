@@ -1,5 +1,7 @@
 package com.oryzone.mvdetector;
 
+import com.oryzone.mvdetector.detectorEvents.DetectorStateChangedEvent;
+import com.oryzone.mvdetector.detectorEvents.DetectorStateChangedListener;
 import java.awt.Dimension;
 import com.oryzone.mvdetector.detectorEvents.WarningSignalEvent;
 import com.oryzone.mvdetector.detectorEvents.WarningEndedEvent;
@@ -25,7 +27,7 @@ public class Detector extends Thread
     /**
      * The current status of the detector
      */
-    protected DetectorStatus status;
+    protected DetectorState state;
 
     /**
      * The options currently used by the detector
@@ -72,6 +74,11 @@ public class Detector extends Thread
      */
     protected EventListenerList warningListeners;
     
+    /**
+     * List used to store the attached listener for state changed event
+     */
+    protected EventListenerList stateChangedListeners;
+    
     
     protected boolean grabStarted = false;
     
@@ -85,9 +92,10 @@ public class Detector extends Thread
     {
         
         this.options = options;
-	this.status = DetectorStatus.STOPPED;
+	this.state = DetectorState.STOPPED;
 	this.imageDifference = new ImageDifference();
         this.warningListeners = new EventListenerList();
+        this.stateChangedListeners = new EventListenerList();
     }
 
     /**
@@ -134,7 +142,7 @@ public class Detector extends Thread
             this.grabber.setImageWidth(640);
             this.grabber.setImageHeight(480);
 
-	    this.status = DetectorStatus.STARTED;
+	    this.setDetectorState(DetectorState.STARTED);
 	    this.grabber.start();
             this.grabStarted = true;
             this.canvasFrame.setVisible(true);
@@ -143,7 +151,7 @@ public class Detector extends Thread
 	    IplImage currImage = null;
 	    IplImage prevImage = null;
 
-            this.status = DetectorStatus.CAPTURING;
+            this.setDetectorState(DetectorState.CAPTURING);
 	    while (this.grabStarted && (this.lastFrame = this.grabber.grab()) != null)
 	    {
 		if (currImage == null)
@@ -166,7 +174,7 @@ public class Detector extends Thread
 		}
                 
 	    }
-	    this.status = DetectorStatus.STOPPED;
+	    this.setDetectorState(DetectorState.STOPPED);
 	} catch (Exception e)
 	{
 	    e.printStackTrace();
@@ -184,7 +192,7 @@ public class Detector extends Thread
 	{
             this.grabber.stop();
             this.canvasFrame.setVisible(false);
-            this.status = DetectorStatus.STOPPED;
+            this.setDetectorState(DetectorState.STOPPED);
         } catch (Exception ex)
 	{
 	    Logger.getLogger(Detector.class.getName()).log(Level.SEVERE, null, ex);
@@ -211,12 +219,26 @@ public class Detector extends Thread
 
     /**
      * Gets the current detection status
-     * 
      * @return the current status of the detector
      */
-    public DetectorStatus getStatus()
+    public DetectorState getDetectorState()
     {
-	return this.status;
+	return this.state;
+    }
+    
+    
+    /**
+     * Sets the current detector status and fires the state change event if needed
+     * @param newState the new state
+     */
+    protected void setDetectorState(DetectorState newState)
+    {
+        if(this.state != newState)
+        {
+            DetectorState oldState = this.state;
+            this.state = newState;
+            this.fireDetectorStateChangedEvent(new DetectorStateChangedEvent(this, oldState, newState));
+        }
     }
 
 
@@ -235,7 +257,7 @@ public class Detector extends Thread
         }
 
         
-        if(this.status == DetectorStatus.WARNING)
+        if(this.state == DetectorState.WARNING)
         {
             
             Date now = new Date();
@@ -245,7 +267,7 @@ public class Detector extends Thread
             {
                 //deactivate warning
                 this.warningDeactivationDate = new Date();
-                this.status = DetectorStatus.CAPTURING;
+                this.setDetectorState(DetectorState.CAPTURING);
                 this.fireWarningEndedEvent(new WarningEndedEvent(this));
             }
 
@@ -256,7 +278,7 @@ public class Detector extends Thread
             if(isWarning)
             {
                 //activate warning
-                this.status = DetectorStatus.WARNING;
+                this.setDetectorState(DetectorState.WARNING);
                 this.fireWarningStartedEvent(new WarningStartedEvent(this));
             }
 
@@ -284,6 +306,30 @@ public class Detector extends Thread
     public Detector removeWarningListener(WarningListener listener)
     {
         this.warningListeners.remove(WarningListener.class, listener);
+        return this;
+    }
+    
+    
+    /**
+     * Add a new detector status changed listener
+     * @param listener the new listener
+     * @return the same instance of {@link Detector} for method chaining
+     */
+    public Detector addStateChangedListener(DetectorStateChangedListener listener)
+    {
+        this.stateChangedListeners.add(DetectorStateChangedListener.class, listener);
+        return this;
+    }
+    
+    
+    /**
+     * Removes a previously attached state changed listener
+     * @param listener  the previously attached listener
+     * @return the same instance of {@link Detector} for method chaining
+     */
+    public Detector removeStateChangedListener(DetectorStateChangedListener listener)
+    {
+        this.stateChangedListeners.remove(DetectorStateChangedListener.class, listener);
         return this;
     }
 
@@ -328,8 +374,20 @@ public class Detector extends Thread
             listeners[i].onWarningSignal(event);
         }
     }
-
-
+    
+    
+    /**
+     * Fires the state changed event to all the attached listeners
+     * @param event the event object to be passed
+     */
+    protected void fireDetectorStateChangedEvent(DetectorStateChangedEvent event)
+    {
+        DetectorStateChangedListener[] listeners = this.stateChangedListeners.getListeners(DetectorStateChangedListener.class);
+        for(int i = 0; i < listeners.length; i++)
+        {
+            listeners[i].onDetectorStateChanged(event);
+        }
+    }
 
 
     /**
@@ -338,7 +396,7 @@ public class Detector extends Thread
      * @author Luciano Mammino, Andrea Mangano
      * @version 1.0
      */
-    public enum DetectorStatus
+    public enum DetectorState
     {
 	/**
 	 * Status acquired when the detector is stopped. It is the initial
