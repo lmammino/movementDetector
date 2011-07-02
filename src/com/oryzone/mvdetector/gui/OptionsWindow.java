@@ -7,6 +7,8 @@
 package com.oryzone.mvdetector.gui;
 
 import com.oryzone.mvdetector.DetectorOptions;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -23,6 +25,7 @@ public class OptionsWindow extends javax.swing.JFrame {
     /** Creates new form Options */
     public OptionsWindow(DetectorOptions options) {
         initComponents();
+        initComponentsCustomCode();
         this.options = options;
         this.setValuesFromOptions();
     }
@@ -372,12 +375,6 @@ public class OptionsWindow extends javax.swing.JFrame {
             }
         });
 
-        text_shellCommand.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                onTextShellCommandChange(evt);
-            }
-        });
-
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -472,10 +469,6 @@ public class OptionsWindow extends javax.swing.JFrame {
         this.text_shellCommand.setEnabled(this.check_shellCommand.isSelected());
     }//GEN-LAST:event_onActionExecuteShellCommandChanged
 
-    private void onTextShellCommandChange(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_onTextShellCommandChange
-        this.options.setActionExecuteCommandText(this.text_shellCommand.getText());
-    }//GEN-LAST:event_onTextShellCommandChange
-
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -509,5 +502,39 @@ public class OptionsWindow extends javax.swing.JFrame {
     private javax.swing.JSpinner spinner_warningDuration;
     private javax.swing.JTextField text_shellCommand;
     // End of variables declaration//GEN-END:variables
+
+
+    private void initComponentsCustomCode()
+    {
+        this.text_shellCommand.getDocument().addDocumentListener(new DocumentListener(){
+
+
+            @Override
+            public void insertUpdate(DocumentEvent de)
+            {
+                this.updateOptions();
+            }
+
+
+            @Override
+            public void removeUpdate(DocumentEvent de)
+            {
+                this.updateOptions();
+            }
+
+
+            @Override
+            public void changedUpdate(DocumentEvent de)
+            {
+                this.updateOptions();
+            }
+            
+            protected void updateOptions()
+            {
+                options.setActionExecuteCommandText(text_shellCommand.getText());
+            }
+            
+        });
+    }
 
 }

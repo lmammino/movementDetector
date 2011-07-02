@@ -489,9 +489,6 @@
                           </Events>
                         </Component>
                         <Component class="javax.swing.JTextField" name="text_shellCommand">
-                          <Events>
-                            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="onTextShellCommandChange"/>
-                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>
