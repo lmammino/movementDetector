@@ -2,6 +2,10 @@ package com.oryzone.mvdetector.gui;
 
 import com.oryzone.mvdetector.Detector;
 import com.oryzone.mvdetector.DetectorOptions;
+import com.oryzone.mvdetector.detectorActions.ExecuteCommandAction;
+import com.oryzone.mvdetector.detectorActions.PlayBeepAction;
+import com.oryzone.mvdetector.detectorActions.SaveFrameAction;
+import com.oryzone.mvdetector.detectorActions.RegisterLogAction;
 import com.oryzone.mvdetector.detectorEvents.DetectorStateChangedEvent;
 import com.oryzone.mvdetector.detectorEvents.DetectorStateChangedListener;
 import com.oryzone.mvdetector.detectorEvents.WarningEndedEvent;
@@ -39,12 +43,23 @@ public class MainWindow
     protected Icon iconWarning;
     protected Icon iconCapturing;
     protected Thread thread;
+    protected PlayBeepAction playBeepAction;
+    protected SaveFrameAction saveFrameAction;
+    protected RegisterLogAction registerLogAction;
+    protected ExecuteCommandAction executeCommandAction;
 
 
     public MainWindow()
     {
         initComponents();
         initCustomComponents();
+        
+        this.playBeepAction = new PlayBeepAction();
+        this.saveFrameAction = new SaveFrameAction();
+        this.registerLogAction = new RegisterLogAction();
+        this.registerLogAction.setLogWindow(console);
+        this.executeCommandAction = new ExecuteCommandAction();
+        this.executeCommandAction.setLogWindow(console);
         
         this.timer = new Timer(1000, this);
         this.iconOk = new ImageIcon(getClass().getResource("/images/fine_small.png"));
@@ -242,7 +257,13 @@ public class MainWindow
     public void onWarningStarted(WarningStartedEvent e)
     {
         this.timer.start();
-        this.console.log("*** WARNING STARTED");
+        
+        if(this.optionsWindow.options.isActionRegisterLogEnabled())
+        {
+            this.registerLogAction.setMessage("*** WARNING STARTED");
+            this.registerLogAction.doAction();
+        }
+
     }
 
 
@@ -250,7 +271,12 @@ public class MainWindow
     public void onWarningEnded(WarningEndedEvent e)
     {
         this.timer.stop();
-        this.console.log("*** WARNING ENDED");
+        
+        if(this.optionsWindow.options.isActionRegisterLogEnabled())
+        {
+            this.registerLogAction.setMessage("*** WARNING ENDED");
+            this.registerLogAction.doAction();
+        }
         
     }
 
@@ -259,8 +285,28 @@ public class MainWindow
     public void onWarningSignal(WarningSignalEvent e)
     {
         this.pendingSeconds = this.optionsWindow.options.getWarningDuration() + 1;
-        Toolkit.getDefaultToolkit().beep();
-        this.console.log( ""+(e.getDetector().getImageDifference().getDifferencePercent()) );
+        
+        if(this.optionsWindow.options.isActionRegisterLogEnabled())
+        {
+            this.registerLogAction.setMessage("Movement detected ( "+(e.getDetector().getImageDifference().getDifferencePercent()) + " intensity )");
+            this.registerLogAction.doAction();
+        }
+        
+        if(this.optionsWindow.options.isActionPlayBeepSoundEnabled())
+            this.playBeepAction.doAction();
+        
+        if(this.optionsWindow.options.isActionSaveFramesEnabled())
+        {
+            this.saveFrameAction.setUseFaceDetection(this.optionsWindow.options.isActionSaveFramesUseFaceDetection());
+            this.saveFrameAction.setFrame(e.getDetector().getLastFrame());
+            this.saveFrameAction.doAction();
+        }
+        
+        if(this.optionsWindow.options.isActionExecuteCommandEnabled())
+        {
+            this.executeCommandAction.setCommand(this.optionsWindow.options.getActionExecuteCommandText());
+            this.executeCommandAction.doAction();
+        }
     }
 
 
