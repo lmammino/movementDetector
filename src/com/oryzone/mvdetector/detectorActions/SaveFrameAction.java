@@ -61,14 +61,14 @@ public class SaveFrameAction implements IDetectorAction
     @Override
     public void doAction()
     {
-        IplImage frame = this.frame;
+        IplImage frameToSave = this.frame;
         
         if(this.useFaceDetection)
         {
-            frame = this.detector.detectAndDraw(this.frame);
+            frameToSave = this.detector.detectAndDraw(this.frame);
         }
         
-        cvSaveImage(this.path.getAbsolutePath() + File.separator + (new Date()).getTime() + ".jpg", frame);
+        cvSaveImage(this.path.getAbsolutePath() + File.separator + (new Date()).getTime() + ".jpg", frameToSave);
     }
     
 }

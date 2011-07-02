@@ -109,6 +109,7 @@ public class MainWindow
         getContentPane().add(canvas, java.awt.BorderLayout.CENTER);
 
         toolBar.setBorder(null);
+        toolBar.setFloatable(false);
         toolBar.setRollover(true);
 
         btn_start.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/media-record.png"))); // NOI18N
@@ -127,6 +128,7 @@ public class MainWindow
         btn_stop.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/media-playback-stop.png"))); // NOI18N
         btn_stop.setText("Stop");
         btn_stop.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        btn_stop.setEnabled(false);
         btn_stop.setFocusable(false);
         btn_stop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_stop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -203,6 +205,7 @@ public class MainWindow
     }
 
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
+        this.btn_start.setEnabled(false);
         this.detector = new Detector(this.detectorOptions);
         this.detector.addWarningListener(this);
         this.detector.addStateChangedListener(this); 
@@ -210,9 +213,10 @@ public class MainWindow
     }//GEN-LAST:event_btn_startActionPerformed
 
     private void btn_stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_stopActionPerformed
-        this.detector.beforeStop();
-        this.detector.destroy();
-        this.detector = null;
+        //this.detector.beforeStop();
+        //this.detector.destroy();
+        //this.detector = null;
+        this.detector.close();
     }//GEN-LAST:event_btn_stopActionPerformed
 
     private void btn_optionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_optionsActionPerformed
@@ -243,7 +247,7 @@ public class MainWindow
 
     
     @Override
-    public void actionPerformed(ActionEvent ae)
+    public synchronized void actionPerformed(ActionEvent ae)
     {
         //reacts to timer actions
         if( ae.getSource() instanceof Timer )
@@ -254,7 +258,7 @@ public class MainWindow
     }
 
     @Override
-    public void onWarningStarted(WarningStartedEvent e)
+    public synchronized void onWarningStarted(WarningStartedEvent e)
     {
         this.timer.start();
         
@@ -268,7 +272,7 @@ public class MainWindow
 
 
     @Override
-    public void onWarningEnded(WarningEndedEvent e)
+    public synchronized void onWarningEnded(WarningEndedEvent e)
     {
         this.timer.stop();
         
@@ -282,7 +286,7 @@ public class MainWindow
 
 
     @Override
-    public void onWarningSignal(WarningSignalEvent e)
+    public synchronized void onWarningSignal(WarningSignalEvent e)
     {
         this.pendingSeconds = this.optionsWindow.options.getWarningDuration() + 1;
         
@@ -315,19 +319,28 @@ public class MainWindow
     {
         switch(e.getNewState())
         {
-            case STARTED:
             case STOPPED:
+                this.detector.destroy();
+                this.detector = null;
+                this.btn_start.setEnabled(true);
+                this.btn_stop.setEnabled(false);
                 this.lbl_warning.setText("");
                 this.lbl_warning.setIcon(this.iconOk);
                 this.lbl_warning.setForeground(Color.GREEN);
                 break;
+            
+            case STARTED:
             case CAPTURING:
+                this.btn_start.setEnabled(false);
+                this.btn_stop.setEnabled(true);
                 this.lbl_warning.setText("");
                 this.lbl_warning.setIcon(this.iconCapturing);
                 this.lbl_warning.setForeground(Color.BLACK);
                 break;
                 
             case WARNING:
+                this.btn_start.setEnabled(false);
+                this.btn_stop.setEnabled(true);
                 this.lbl_warning.setText("");
                 this.lbl_warning.setIcon(this.iconWarning);
                 this.lbl_warning.setForeground(Color.RED);

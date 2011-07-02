@@ -100,7 +100,7 @@ public class Detector extends Thread
 	this.state = DetectorState.STOPPED;
         
         IDifferenceStrategy differenceStrategy;
-        if(this.options.usingColoredDifference())
+        if(this.options.useColoredDifference)
             differenceStrategy = new RgbDifferenceStrategy();
         else
             differenceStrategy = new GreyscaleDifferenceStrategy();
@@ -143,7 +143,7 @@ public class Detector extends Thread
     {
         try
 	{
-	    this.grabber = new OpenCVFrameGrabber(0);
+	    this.grabber = new OpenCVFrameGrabber(0);//FrameGrabber.getDefault().newInstance();
 
             this.canvasFrame = new CanvasFrame("Capturing");
             this.canvasFrame.setVisible(false);
@@ -160,7 +160,7 @@ public class Detector extends Thread
                 @Override
                 public void windowClosing(WindowEvent we)
                 {
-                    setDetectorState(DetectorState.STOPPED);
+                    beforeStop();
                 }
 
                 @Override
@@ -214,7 +214,6 @@ public class Detector extends Thread
 		}
                 
 	    }
-	    this.setDetectorState(DetectorState.STOPPED);
 	} catch (Exception e)
 	{
 	    e.printStackTrace();
@@ -245,7 +244,8 @@ public class Detector extends Thread
         this.canvasFrame.dispose();
         try
         {
-            this.grabber.release();
+            if(this.grabber != null)
+                this.grabber.release();
         } catch (Exception ex)
         {
             Logger.getLogger(Detector.class.getName()).log(Level.SEVERE, null, ex);
@@ -427,6 +427,12 @@ public class Detector extends Thread
         {
             listeners[i].onDetectorStateChanged(event);
         }
+    }
+
+
+    public void close()
+    {
+        beforeStop();
     }
 
 
