@@ -157,7 +157,7 @@ public class DetectorOptions implements Serializable
         pref.putInt(DetectorOptions.OPT_FRAMEDIMENSIONWIDTH, this.getFrameDimension().width);
         pref.putInt(DetectorOptions.OPT_FRAMEDIMENSIONHEIGHT, this.getFrameDimension().height);
         pref.putBoolean(DetectorOptions.OPT_USECOLOREDDIFFERENCE, this.usingColoredDifference());
-        pref.putBoolean(DetectorOptions.OPT_ACTIONPLAYSYSTEMBEEP_ENABLED, this.isActionExecuteCommandEnabled());
+        pref.putBoolean(DetectorOptions.OPT_ACTIONPLAYSYSTEMBEEP_ENABLED, this.isActionPlayBeepSoundEnabled());
         pref.putBoolean(DetectorOptions.OPT_ACTIONSAVEFRAMES_ENABLED, this.isActionSaveFramesEnabled());
         pref.putBoolean(DetectorOptions.OPT_ACTIONSAVEFRAMES_FACEDETECTION_ENABLED, this.isActionSaveFramesUseFaceDetection());
         pref.putBoolean(DetectorOptions.OPT_ACTIONREGISTERLOG_ENABLED, this.isActionRegisterLogEnabled());
