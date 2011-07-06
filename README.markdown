@@ -1,5 +1,5 @@
 Movemente Detector
-------------------
+==================
 Movement Detector is a simple Java OpenCv application created as university project for the computer vision course at La sapienza, Rome.
 It aims to detect when movements occur in front of a camera by using pixel based frame difference.
 It also provides the ability to detect faces when a moderate quantity of movement is detected.
