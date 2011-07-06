@@ -143,7 +143,7 @@ public class Detector extends Thread
     {
         try
 	{
-	    this.grabber = new OpenCVFrameGrabber(0);//FrameGrabber.getDefault().newInstance();
+	    this.grabber = new OpenCVFrameGrabber(0);
 
             this.canvasFrame = new CanvasFrame("Capturing");
             this.canvasFrame.setVisible(false);

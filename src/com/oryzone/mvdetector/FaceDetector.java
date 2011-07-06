@@ -6,6 +6,7 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor;
 import static com.googlecode.javacv.cpp.opencv_objdetect.cvHaarDetectObjects;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.googlecode.javacv.cpp.opencv_objdetect.CvHaarClassifierCascade;
+import java.io.File;
 
 
 /**
@@ -43,7 +44,7 @@ public class FaceDetector
     public FaceDetector()
     {
         this.storage = CvMemStorage.create();
-        this.cascade = new CvHaarClassifierCascade(cvLoad(CASCADE_FILE));
+        this.cascade = new CvHaarClassifierCascade( cvLoad(getClass().getResource("/res/" + CASCADE_FILE).getPath()) );
         this.borderColor = CvScalar.YELLOW;
     }
 

@@ -274,7 +274,7 @@ public class MainWindow
     @Override
     public synchronized void onWarningEnded(WarningEndedEvent e)
     {
-        this.timer.stop();
+        
         
         if(this.optionsWindow.options.isActionRegisterLogEnabled())
         {
@@ -320,6 +320,7 @@ public class MainWindow
         switch(e.getNewState())
         {
             case STOPPED:
+                this.timer.stop();
                 this.detector.destroy();
                 this.detector = null;
                 this.btn_start.setEnabled(true);
